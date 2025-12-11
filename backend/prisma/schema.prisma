@@ -1,0 +1,221 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  user_id Int @id @default(autoincrement())
+  state_id Int
+  state State @relation(fields: [state_id], references: [state_id])
+  role_id Int
+  role Role @relation(fields: [role_id], references: [role_id])
+  name String
+  birth_date DateTime?
+  email String @unique
+  phone String?
+  password String
+  study_place String?
+  work_place String?
+  is_deleted Boolean @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user_classes User_Class[]
+  reviews Review[]
+  tuitions Tuition[]
+  attendances Attendance[]
+  task_results Task_Result[]
+}
+
+model Class {
+  class_id Int @id @default(autoincrement())
+  state_id Int
+  state State @relation(fields: [state_id], references: [state_id])
+  name String
+  description String?
+  default_tuition Float?
+  is_deleted Boolean @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user_classes User_Class[]
+  reviews Review[]
+  tuitions Tuition[]
+  schedules Schedule[]
+  sessions Session[]
+}
+
+model User_Class {
+  @@id([user_id, class_id])
+  user_id Int
+  user User @relation(fields: [user_id], references: [user_id])
+  class_id Int
+  class Class @relation(fields: [class_id], references: [class_id])
+  state_id Int
+  state State @relation(fields: [state_id], references: [state_id])
+  role_id Int
+  role Role @relation(fields: [role_id], references: [role_id])
+  enrolled_at DateTime @default(now())
+  is_deleted Boolean @default(false)
+}
+
+model State {
+  state_id Int @id @default(autoincrement())
+  state_type String
+  users User[]
+  classes Class[]
+  user_classes User_Class[]
+  tuitions Tuition[]
+  attendances Attendance[]
+  task_results Task_Result[]
+}
+
+model Role {
+  role_id Int @id @default(autoincrement())
+  role_type String
+  users User[]
+  user_classes User_Class[]
+}
+
+model Review {
+  @@id([user_id, class_id, month, year])
+  review_id Int @default(autoincrement())
+  user_id Int
+  user User @relation(fields: [user_id], references: [user_id])
+  class_id Int
+  class Class @relation(fields: [class_id], references: [class_id])
+  month Int
+  year Int
+  good_attitude String?
+  bad_attitude String?
+  good_skills String?
+  bad_skills String?
+  good_knowledge String?
+  bad_knowledge String?
+}
+
+model Tuition {
+  @@id([user_id, class_id, month, year])
+  tuition_id Int @default(autoincrement())
+  user_id Int
+  user User @relation(fields: [user_id], references: [user_id])
+  class_id Int
+  class Class @relation(fields: [class_id], references: [class_id])
+  state_id Int
+  state State @relation(fields: [state_id], references: [state_id])
+  month Int
+  year Int
+  amount Float
+}
+
+model Schedule {
+  schedule_id Int @id @default(autoincrement())
+  class_id Int
+  class Class @relation(fields: [class_id], references: [class_id])
+  weekday Int
+  start_time String
+  duration Int
+}
+
+model Session {
+  session_id Int @id @default(autoincrement())
+  template_session_id Int?
+  template_session Template_Session? @relation(fields: [template_session_id], references: [template_session_id])
+  class_id Int
+  class Class @relation(fields: [class_id], references: [class_id])
+  name String
+  description String?
+  start_time DateTime?
+  duration Int?
+  is_deleted Boolean @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  attendances Attendance[]
+  session_contents Session_Content[]
+}
+
+model Attendance {
+  @@id([user_id, session_id])
+  user_id Int
+  user User @relation(fields: [user_id], references: [user_id])
+  session_id Int
+  session Session @relation(fields: [session_id], references: [session_id])
+  status_id Int
+  state State @relation(fields: [status_id], references: [state_id])
+  note String?
+}
+
+model Task_Result {
+  @@id([user_id, content_id])
+  user_id Int
+  user User @relation(fields: [user_id], references: [user_id])
+  content_id Int
+  content Content @relation(fields: [content_id], references: [content_id])
+  state_id Int
+  state State @relation(fields: [state_id], references: [state_id])
+  score Float?
+  reivews String?
+}
+
+model Template_Session {
+  template_session_id Int @id @default(autoincrement())
+  name String
+  description String?
+  sessions Session[]
+  template_session_contents Template_Session_Content[]
+}
+
+model Session_Content {
+  session_content_id Int @id @default(autoincrement())
+  session_id Int
+  session Session @relation(fields: [session_id], references: [session_id])
+  content_id Int
+  content Content @relation(fields: [content_id], references: [content_id])
+}
+
+model Template_Session_Content {
+  template_session_content_id Int @id @default(autoincrement())
+  template_session_id Int
+  template_session Template_Session @relation(fields: [template_session_id], references: [template_session_id])
+  content_id Int
+  content Content @relation(fields: [content_id], references: [content_id])
+}
+
+model Content {
+  content_id Int @id @default(autoincrement())
+  name String
+  description String?
+  content_type String
+  deadline DateTime
+  cutoff_score Float
+  session_contents Session_Content[]
+  template_session_contents Template_Session_Content[]
+  task_results Task_Result[]
+  content_files Content_File[]
+}
+
+model File {
+  file_id Int @id @default(autoincrement())
+  filename String
+  filetype String
+  filepath String
+  filesize Int
+  uploaded_at DateTime @default(now())
+  content_files Content_File[]
+}
+
+model Content_File {
+  @@id([content_id, file_id])
+  content_id Int
+  content Content @relation(fields: [content_id], references: [content_id])
+  file_id Int
+  file File @relation(fields: [file_id], references: [file_id])
+  file_role String
+}
