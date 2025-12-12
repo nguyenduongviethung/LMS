@@ -1,5 +1,5 @@
 import express from 'express';
-import { prisma } from './prisma/client';
+import { prisma } from './shared/prisma/client';
 
 const app = express();
 app.use(express.json());
