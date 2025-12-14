@@ -1,23 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import { AuthService } from './auth.service';
+import { CreateUserDTO } from '../user/user.model';
 
-declare global {
-    namespace Express {
-        interface Request {
-            user?: { id: number };
-        }
-    }
-}
-
-interface LoginRequest {
+export interface LoginRequest {
     email: string;
     password: string;
 }
 
-interface RegisterRequest {
-    email: string;
-    password: string;
-    [key: string]: any;
+export interface LogoutRequest {
+    userId: number;
 }
 
 interface RefreshTokenRequest {
@@ -35,25 +26,32 @@ interface RefreshTokenRequest {
 
 export const AuthController = {
     async login(req: Request<{}, {}, LoginRequest>, res: Response, next: NextFunction) {
-        const result = await AuthService.login(req.body.email, req.body.password);
-        return res.json(result);
+        const { accessToken, refreshToken } = await AuthService.login(req.body);
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: true,       // true khi dùng HTTPS
+            sameSite: "strict",
+            path: "/auth/refresh"
+        });
+
+        return res.json({ accessToken });
     },
 
-    async register(req: Request<{}, {}, RegisterRequest>, res: Response, next: NextFunction) {
+    async register(req: Request<{}, {}, CreateUserDTO>, res: Response, next: NextFunction) {
         const result = await AuthService.register(req.body);
         return res.json(result);
     },
 
     async refreshToken(req: Request<{}, {}, RefreshTokenRequest>, res: Response, next: NextFunction) {
-        const result = await AuthService.refreshToken(req.body.refreshToken);
+        const result = await AuthService.refreshToken(req.cookies.refreshToken);
         return res.json(result);
     },
 
-    async logout(req: Request<{}, {}, {}>, res: Response, next: NextFunction) {
-        if (!req.user) {
+    async logout(req: Request<{}, {}, LogoutRequest>, res: Response, next: NextFunction) {
+        if (!req.user?.userId) {
             return res.status(401).json({ message: "Unauthorized" });
         }
-        await AuthService.logout(req.user.id);
+        await AuthService.logout({ userId: req.user.userId });
         return res.json({ message: "Logged out" });
     },
 

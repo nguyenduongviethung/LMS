@@ -81,6 +81,7 @@ model State {
 
 model Role {
   roleId Int @id @default(autoincrement())
+  roleName String
   roleType String
   users User[]
   userClasses UserClass[]
