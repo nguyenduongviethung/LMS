@@ -5,220 +5,229 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+    provider = "postgresql"
 }
 
 model User {
-  userId Int @id @default(autoincrement())
-  stateId Int
-  state State @relation(fields: [stateId], references: [stateId])
-  roleId Int
-  role Role @relation(fields: [roleId], references: [roleId])
-  name String
-  birthDate DateTime?
-  email String @unique
-  phone String?
-  password String
-  studyPlace String?
-  workPlace String?
-  refreshToken String?
-  otp String?
-  isDeleted Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userClasses UserClass[]
-  reviews Review[]
-  tuitions Tuition[]
-  attendances Attendance[]
-  taskResults TaskResult[]
+    userId       Int          @id @default(autoincrement())
+    stateId      Int
+    state        State        @relation(fields: [stateId], references: [stateId])
+    roleId       Int
+    role         Role         @relation(fields: [roleId], references: [roleId])
+    name         String
+    birthDate    DateTime?
+    email        String       @unique
+    phone        String?
+    password     String
+    studyPlace   String?
+    workPlace    String?
+    refreshToken String?
+    otp          String?
+    isDeleted    Boolean      @default(false)
+    createdAt    DateTime     @default(now())
+    updatedAt    DateTime     @updatedAt
+    userClasses  UserClass[]
+    reviews      Review[]
+    tuitions     Tuition[]
+    attendances  Attendance[]
+    taskResults  TaskResult[]
 }
 
 model Class {
-  classId Int @id @default(autoincrement())
-  stateId Int
-  state State @relation(fields: [stateId], references: [stateId])
-  name String
-  description String?
-  defaultTuition Float?
-  isDeleted Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userClasses UserClass[]
-  reviews Review[]
-  tuitions Tuition[]
-  schedules Schedule[]
-  sessions Session[]
+    classId        Int         @id @default(autoincrement())
+    stateId        Int
+    state          State       @relation(fields: [stateId], references: [stateId])
+    name           String
+    description    String?
+    defaultTuition Float?
+    isDeleted      Boolean     @default(false)
+    createdAt      DateTime    @default(now())
+    updatedAt      DateTime    @updatedAt
+    userClasses    UserClass[]
+    reviews        Review[]
+    tuitions       Tuition[]
+    schedules      Schedule[]
+    sessions       Session[]
 }
 
 model UserClass {
-  @@id([userId, classId])
-  userId Int
-  user User @relation(fields: [userId], references: [userId])
-  classId Int
-  class Class @relation(fields: [classId], references: [classId])
-  stateId Int
-  state State @relation(fields: [stateId], references: [stateId])
-  roleId Int
-  role Role @relation(fields: [roleId], references: [roleId])
-  enrolledAt DateTime @default(now())
-  isDeleted Boolean @default(false)
+    userId     Int
+    user       User     @relation(fields: [userId], references: [userId])
+    classId    Int
+    class      Class    @relation(fields: [classId], references: [classId])
+    stateId    Int
+    state      State    @relation(fields: [stateId], references: [stateId])
+    roleId     Int
+    role       Role     @relation(fields: [roleId], references: [roleId])
+    enrolledAt DateTime @default(now())
+    isDeleted  Boolean  @default(false)
+
+    @@id([userId, classId])
 }
 
 model State {
-  stateId Int @id @default(autoincrement())
-  stateType String
-  users User[]
-  classes Class[]
-  userClasses UserClass[]
-  tuitions Tuition[]
-  attendances Attendance[]
-  taskResults TaskResult[]
+    stateId     Int          @id @default(autoincrement())
+    stateName   String
+    stateType   String
+    users       User[]
+    classes     Class[]
+    userClasses UserClass[]
+    tuitions    Tuition[]
+    attendances Attendance[]
+    taskResults TaskResult[]
 }
 
 model Role {
-  roleId Int @id @default(autoincrement())
-  roleName String
-  roleType String
-  users User[]
-  userClasses UserClass[]
+    roleId      Int         @id @default(autoincrement())
+    roleName    String
+    roleType    String
+    users       User[]
+    userClasses UserClass[]
 }
 
 model Review {
-  @@id([userId, classId, month, year])
-  reviewId Int @default(autoincrement())
-  userId Int
-  user User @relation(fields: [userId], references: [userId])
-  classId Int
-  class Class @relation(fields: [classId], references: [classId])
-  month Int
-  year Int
-  goodAttitude String?
-  badAttitude String?
-  goodSkills String?
-  badSkills String?
-  goodKnowledge String?
-  badKnowledge String?
+    reviewId      Int     @default(autoincrement())
+    userId        Int
+    user          User    @relation(fields: [userId], references: [userId])
+    classId       Int
+    class         Class   @relation(fields: [classId], references: [classId])
+    month         Int
+    year          Int
+    goodAttitude  String?
+    badAttitude   String?
+    goodSkills    String?
+    badSkills     String?
+    goodKnowledge String?
+    badKnowledge  String?
+
+    @@id([userId, classId, month, year])
 }
 
 model Tuition {
-  @@id([userId, classId, month, year])
-  tuitionId Int @default(autoincrement())
-  userId Int
-  user User @relation(fields: [userId], references: [userId])
-  classId Int
-  class Class @relation(fields: [classId], references: [classId])
-  stateId Int
-  state State @relation(fields: [stateId], references: [stateId])
-  month Int
-  year Int
-  amount Float
+    tuitionId Int   @default(autoincrement())
+    userId    Int
+    user      User  @relation(fields: [userId], references: [userId])
+    classId   Int
+    class     Class @relation(fields: [classId], references: [classId])
+    stateId   Int
+    state     State @relation(fields: [stateId], references: [stateId])
+    month     Int
+    year      Int
+    amount    Float
+
+    @@id([userId, classId, month, year])
 }
 
 model Schedule {
-  scheduleId Int @id @default(autoincrement())
-  classId Int
-  class Class @relation(fields: [classId], references: [classId])
-  weekday Int
-  startTime String
-  duration Int
+    scheduleId Int    @id @default(autoincrement())
+    classId    Int
+    class      Class  @relation(fields: [classId], references: [classId])
+    weekday    Int
+    startTime  String
+    duration   Int
 }
 
 model Session {
-  sessionId Int @id @default(autoincrement())
-  templateSessionId Int?
-  templateSession TemplateSession? @relation(fields: [templateSessionId], references: [templateSessionId])
-  classId Int
-  class Class @relation(fields: [classId], references: [classId])
-  name String
-  description String?
-  startTime DateTime?
-  duration Int?
-  isDeleted Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  attendances Attendance[]
-  sessionContents SessionContent[]
+    sessionId         Int              @id @default(autoincrement())
+    templateSessionId Int?
+    templateSession   TemplateSession? @relation(fields: [templateSessionId], references: [templateSessionId])
+    classId           Int
+    class             Class            @relation(fields: [classId], references: [classId])
+    name              String
+    description       String?
+    startTime         DateTime?
+    duration          Int?
+    isDeleted         Boolean          @default(false)
+    createdAt         DateTime         @default(now())
+    updatedAt         DateTime         @updatedAt
+    attendances       Attendance[]
+    sessionContents   SessionContent[]
 }
 
 model Attendance {
-  @@id([userId, sessionId])
-  userId Int
-  user User @relation(fields: [userId], references: [userId])
-  sessionId Int
-  session Session @relation(fields: [sessionId], references: [sessionId])
-  stateId Int
-  state State @relation(fields: [stateId], references: [stateId])
-  note String?
+    userId    Int
+    user      User    @relation(fields: [userId], references: [userId])
+    sessionId Int
+    session   Session @relation(fields: [sessionId], references: [sessionId])
+    stateId   Int
+    state     State   @relation(fields: [stateId], references: [stateId])
+    note      String?
+
+    @@id([userId, sessionId])
 }
 
 model TaskResult {
-  @@id([userId, contentId])
-  userId Int
-  user User @relation(fields: [userId], references: [userId])
-  contentId Int
-  content Content @relation(fields: [contentId], references: [contentId])
-  stateId Int
-  state State @relation(fields: [stateId], references: [stateId])
-  score Float?
-  reviews String?
+    userId    Int
+    user      User    @relation(fields: [userId], references: [userId])
+    contentId Int
+    content   Content @relation(fields: [contentId], references: [contentId])
+    stateId   Int
+    state     State   @relation(fields: [stateId], references: [stateId])
+    score     Float?
+    reviews   String?
+
+    @@id([userId, contentId])
 }
 
 model TemplateSession {
-  templateSessionId Int @id @default(autoincrement())
-  name String
-  description String?
-  sessions Session[]
-  templateSessionContents TemplateSessionContent[]
+    templateSessionId       Int                      @id @default(autoincrement())
+    name                    String
+    description             String?
+    sessions                Session[]
+    templateSessionContents TemplateSessionContent[]
 }
 
 model SessionContent {
-  sessionContentId Int @id @default(autoincrement())
-  sessionId Int
-  session Session @relation(fields: [sessionId], references: [sessionId])
-  contentId Int
-  content Content @relation(fields: [contentId], references: [contentId])
+    sessionId Int
+    session   Session @relation(fields: [sessionId], references: [sessionId])
+    contentId Int
+    content   Content @relation(fields: [contentId], references: [contentId])
+
+    @@id([sessionId, contentId])
 }
 
 model TemplateSessionContent {
-  templateSessionContentId Int @id @default(autoincrement())
-  templateSessionId Int
-  templateSession TemplateSession @relation(fields: [templateSessionId], references: [templateSessionId])
-  contentId Int
-  content Content @relation(fields: [contentId], references: [contentId])
+    templateSessionId Int
+    templateSession   TemplateSession @relation(fields: [templateSessionId], references: [templateSessionId])
+    contentId         Int
+    content           Content         @relation(fields: [contentId], references: [contentId])
+
+    @@id([templateSessionId, contentId])
 }
 
 model Content {
-  contentId Int @id @default(autoincrement())
-  name String
-  description String?
-  contentType String
-  deadline DateTime
-  cutoffScore Float
-  sessionContents SessionContent[]
-  templateSessionContents TemplateSessionContent[]
-  taskResults TaskResult[]
-  contentFiles ContentFile[]
+    contentId               Int                      @id @default(autoincrement())
+    name                    String
+    description             String?
+    contentType             String
+    deadline                DateTime
+    cutoffScore             Float
+    sessionContents         SessionContent[]
+    templateSessionContents TemplateSessionContent[]
+    taskResults             TaskResult[]
+    contentFiles            ContentFile[]
 }
 
 model File {
-  fileId Int @id @default(autoincrement())
-  filename String
-  filetype String
-  filepath String
-  filesize Int
-  uploadedAt DateTime @default(now())
-  contentFiles ContentFile[]
+    fileId       Int           @id @default(autoincrement())
+    filename     String
+    filetype     String
+    filepath     String
+    filesize     Int
+    uploadedAt   DateTime      @default(now())
+    contentFiles ContentFile[]
 }
 
 model ContentFile {
-  @@id([contentId, fileId])
-  contentId Int
-  content Content @relation(fields: [contentId], references: [contentId])
-  fileId Int
-  file File @relation(fields: [fileId], references: [fileId])
-  fileRole String
+    contentId Int
+    content   Content @relation(fields: [contentId], references: [contentId])
+    fileId    Int
+    file      File    @relation(fields: [fileId], references: [fileId])
+    fileRole  String
+
+    @@id([contentId, fileId])
 }

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { userService } from "./user.service";
-import { UserIdentity, CreateUserDTO, UpdateUserDTO } from "./user.model";
+import { UserIdentity, CreateUserDTO, UpdateUserDTO } from "@shared/src/user/user.model";
 
 export const userController = {
     async getUsers(req: Request<{}, {}, UserIdentity>, res: Response) {

@@ -1,6 +1,6 @@
 import { prisma } from '../../shared/prisma/client';
 import { userPublicSelect } from './user.select';
-import { UserIdentity } from './user.model';
+import { UserIdentity, UserPublicDTO, CreateUserDTO, UpdateUserDTO } from '@shared/src/user/user.model';
 
 export const UserRepository = {
     async findByEmail(email: string): Promise<UserIdentity & { password: string }> {
@@ -23,11 +23,7 @@ export const UserRepository = {
         });
     },
 
-    findById(userId: number) {
-        return prisma.user.findUnique({ where: { userId } });
-    },
-
-    findByIds(userIds: number[]) {
+    findByIds(userIds: number[]): Promise<UserPublicDTO[]> {
         return prisma.user.findMany({
             where: {
                 userId: { in: userIds },
@@ -37,21 +33,25 @@ export const UserRepository = {
         });
     },
 
-    findAll: async () => {
+    async findAll(): Promise<UserPublicDTO[]> {
         return prisma.user.findMany({
             where: { isDeleted: false },
             select: userPublicSelect
         });
     },
 
-    create(data: Parameters<typeof prisma.user.create>[0]['data']) {
-        return prisma.user.create({ data });
+    async create(data: CreateUserDTO): Promise<UserPublicDTO> {
+        return prisma.user.create({ 
+            data,
+            select: userPublicSelect
+        });
     },
 
-    update: async (id: number, data: any) => {
+    update: async (id: number, data: UpdateUserDTO): Promise<UserPublicDTO> => {
         return prisma.user.update({
+            data,
             where: { userId: id },
-            data
+            select: userPublicSelect
         });
     },
 

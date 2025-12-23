@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { JwtUtil } from "../../shared/utils/jwt.util";
-import { UserIdentity } from "../../features/user/user.model";
+import { UserIdentity } from "@shared/src/user/user.model";
 
 declare global {
     namespace Express {

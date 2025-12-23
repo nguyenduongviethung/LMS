@@ -8,15 +8,24 @@ export interface UserPublicDTO {
   name: string;
   email: string;
   phone?: string | null;
+  birthDate?: Date;
   studyPlace?: string | null;
   workPlace?: string | null;
-  roleId: number;
-  stateId: number;
+  role: {
+    roleName: string;
+  };
+  state: {
+    stateName: string;
+  };
+  userClasses: {
+    class: {
+      name: string;
+    };
+    role: {
+      roleName: string;
+    }
+  }[];
   createdAt: Date;
-}
-
-export interface UserDetailDTO extends UserPublicDTO {
-  birthDate?: Date | null;
 }
 
 export interface CreateUserDTO {
@@ -27,6 +36,8 @@ export interface CreateUserDTO {
   birthDate?: Date;
   studyPlace?: string;
   workPlace?: string;
+  roleId: number;
+  stateId: number;
 }
 
 export interface UpdateUserDTO {
@@ -35,4 +46,7 @@ export interface UpdateUserDTO {
   birthDate?: Date;
   studyPlace?: string;
   workPlace?: string;
+  roleId?: number;
+  stateId?: number;
+  isDeleted?: boolean | false;
 }

@@ -1,8 +1,7 @@
 import { UserRepository } from "./user.repository";
 import { userClassRepository } from "../userClass/userClass.repository";
-import { UserIdentity, CreateUserDTO, UpdateUserDTO } from "./user.model";
+import { UserIdentity, CreateUserDTO, UpdateUserDTO } from "@shared/src/user/user.model";
 import bcrypt from "bcrypt";
-import { de } from "zod/v4/locales";
 
 export const userService = {
     async getUsers(currentUser: UserIdentity) {
@@ -13,9 +12,8 @@ export const userService = {
 
         const userClasses = await userClassRepository.findByUserId(currentUser.userId);
 
-        const teacherClassIds = new Set<number>();
+        const teacherClassIds = new Set<number>([currentUser.userId]);
         const taClassIds = new Set<number>();
-        let includeSelf = false;
 
         for (const uc of userClasses) {
             if (uc.role.roleName === "teacher") {
@@ -24,17 +22,9 @@ export const userService = {
             if (uc.role.roleName === "teacher_assistant") {
                 taClassIds.add(uc.classId);
             }
-            if (uc.role.roleName === "student") {
-                includeSelf = true;
-            }
         }
 
         const allowedUserIds = new Set<number>();
-
-        // student → bản thân
-        if (includeSelf) {
-            allowedUserIds.add(currentUser.userId);
-        }
 
         // teacher → toàn bộ user trong lớp mình dạy
         if (teacherClassIds.size > 0) {

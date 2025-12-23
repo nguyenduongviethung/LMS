@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AuthService } from './auth.service';
-import { CreateUserDTO } from '../user/user.model';
+import { CreateUserDTO } from '@shared/src/user/user.model';
 
 export interface LoginRequest {
     email: string;

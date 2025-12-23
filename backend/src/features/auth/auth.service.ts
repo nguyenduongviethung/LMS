@@ -3,7 +3,7 @@ import { UserRepository } from "../user/user.repository";
 import { JwtUtil } from "../../shared/utils/jwt.util";
 import { HashUtil } from "../../shared/utils/hash.util";
 // import { OtpUtil } from "../shared/utils/otp.util";
-import { CreateUserDTO } from "../user/user.model";
+import { CreateUserDTO } from "@shared/src/user/user.model";
 import { LoginRequest, LogoutRequest } from "./auth.controller";
 
 export const AuthService = {
