@@ -1,6 +1,6 @@
 import { ClassRepository } from "./class.repository";
 import { ClassPublicDTO, CreateClassDTO, UpdateClassDTO } from "@shared/src/class/class.model";
-import { UserIdentity} from "@shared/src/user/user.model";
+import { UserIdentity } from "@shared/src/user/user.model";
 import { userClassRepository } from "../userClass/userClass.repository";
 
 export const ClassService = {
@@ -55,6 +55,23 @@ export const ClassService = {
         }
 
         return [...allowedClassIds];
+    },
+
+    async canManageUserClass(currentUser: UserIdentity, classId: number): Promise<boolean> {
+
+        // ADMIN → full quyền
+        if (currentUser.roleName === "admin") {
+            return true;
+        }
+
+        // TEACHER → chỉ được quản lý class mình dạy
+        if (currentUser.roleName === "teacher") {
+            const uc = await userClassRepository.findByUserIdAndClassId(currentUser.userId, classId);
+
+            return !!uc && uc.role.roleName == "teacher";
+        }
+
+        return false;
     },
 
     async getClasses(currentUser: UserIdentity): Promise<ClassPublicDTO[]> {

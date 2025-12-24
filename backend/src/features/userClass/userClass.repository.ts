@@ -1,4 +1,6 @@
 import { prisma } from "../../shared/prisma/client";
+import { userClassPublicSelect } from "./userClass.select";
+import { UserClassPublicDTO, CreateUserClassDTO, UpdateUserClassDTO } from "@shared/src/userClass/userClass.model";
 
 export const userClassRepository = {
     findByUserId(userId: number) {
@@ -59,5 +61,51 @@ export const userClassRepository = {
                 classId: true,
             },
         });
+    },
+
+    findByUserIdAndClassId(userId: number, classId: number): Promise<UserClassPublicDTO | null> {
+        return prisma.userClass.findUnique({
+            where: {
+                userId_classId: {
+                    userId: userId,
+                    classId: classId
+                }
+            },
+            select: userClassPublicSelect
+        });
+    },
+
+    async create(data: CreateUserClassDTO): Promise<UserClassPublicDTO> {
+        const existing = await prisma.userClass.findUnique({
+            where: {
+                userId_classId: {
+                    userId: data.userId,
+                    classId: data.classId,
+                },
+            },
+        });
+
+        if (!existing) {
+            return prisma.userClass.create({
+                data,
+                select: userClassPublicSelect,
+            });
+        }
+
+        return this.update(data.userId, data.classId, data);
+    },
+
+    update(userId: number, classId: number, data: UpdateUserClassDTO): Promise<UserClassPublicDTO> {
+        return prisma.userClass.update({
+            where: { 
+                userId_classId: {
+                    userId,
+                    classId
+                }
+            },
+            data,
+            select: userClassPublicSelect,
+        });
     }
+                
 };

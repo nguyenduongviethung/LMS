@@ -1,3 +1,6 @@
+import { CreateUserSchema, UpdateUserSchema } from "./user.schema"
+import { z } from "zod"
+
 export interface UserIdentity {
   userId: number;
   roleName: string; // admin | user | ...
@@ -28,25 +31,6 @@ export interface UserPublicDTO {
   createdAt: Date;
 }
 
-export interface CreateUserDTO {
-  name: string;
-  email: string;
-  password: string;
-  phone?: string;
-  birthDate?: Date;
-  studyPlace?: string;
-  workPlace?: string;
-  roleId: number;
-  stateId: number;
-}
+export interface CreateUserDTO extends z.infer<typeof CreateUserSchema.shape.body>{}
 
-export interface UpdateUserDTO {
-  name?: string;
-  phone?: string;
-  birthDate?: Date;
-  studyPlace?: string;
-  workPlace?: string;
-  roleId?: number;
-  stateId?: number;
-  isDeleted?: boolean | false;
-}
+export interface UpdateUserDTO extends z.infer<typeof UpdateUserSchema.shape.body>{}

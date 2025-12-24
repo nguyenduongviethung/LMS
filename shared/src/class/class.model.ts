@@ -1,3 +1,6 @@
+import { CreateClassSchema, UpdateClassSchema } from "./class.schema";
+import { z } from "zod"
+
 export interface ClassPublicDTO {
     classId: number;
     name: string;
@@ -24,18 +27,7 @@ export interface ClassPublicDTO {
     defaultTuition?: number | null;
 }
 
-export interface CreateClassDTO {
-    stateId: number;
-    name: string;
-    description?: string;
-    defaultTuition?: number;
-}
+export interface CreateClassDTO extends z.infer<typeof CreateClassSchema.shape.body>{}
 
 
-export interface UpdateClassDTO {
-    stateId?: number;
-    name?: string;
-    description?: string | null;
-    defaultTuition?: number | null;
-    isDeleted?: boolean;
-}
+export interface UpdateClassDTO extends z.infer<typeof UpdateClassSchema.shape.body>{}
