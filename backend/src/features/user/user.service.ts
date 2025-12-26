@@ -3,7 +3,7 @@ import { userClassRepository } from "../userClass/userClass.repository";
 import { UserIdentity, CreateUserDTO, UpdateUserDTO } from "@shared/src/user/user.model";
 import bcrypt from "bcrypt";
 
-export const userService = {
+export const UserService = {
     async getUsers(currentUser: UserIdentity) {
         // ADMIN
         if (currentUser.roleName === "admin") {

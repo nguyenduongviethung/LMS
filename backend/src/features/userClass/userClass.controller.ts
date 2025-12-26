@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { userClassService } from './userClass.service';
+import { UserClassService } from './userClass.service';
 import { UserIdentity } from '@shared/src/user/user.model';
 import { CreateUserClassDTO, UpdateUserClassDTO } from '@shared/src/userClass/userClass.model';
 
@@ -8,7 +8,7 @@ export const userClassController = {
         if (!req.user) {
             return res.status(401).json({ error: 'Unauthorized' });
         }
-        const created = await userClassService.createUserClass(req.user, req.body);
+        const created = await UserClassService.createUserClass(req.user, req.body);
         return res.status(201).json({ data: created });
     },
 
@@ -16,7 +16,7 @@ export const userClassController = {
         if (!req.user) {
             return res.status(401).json({ error: 'Unauthorized' });
         }
-        const updated = await userClassService.updateUserClass(req.user, parseInt(req.params.userId), parseInt(req.params.classId), req.body);
+        const updated = await UserClassService.updateUserClass(req.user, parseInt(req.params.userId), parseInt(req.params.classId), req.body);
         return res.json({ data: updated });
     },
 
@@ -24,7 +24,7 @@ export const userClassController = {
         if (!req.user) {
             return res.status(401).json({ error: 'Unauthorized' });
         }
-        await userClassService.updateUserClass(req.user, parseInt(req.params.userId), parseInt(req.params.classId), {isDeleted: true});
+        await UserClassService.updateUserClass(req.user, parseInt(req.params.userId), parseInt(req.params.classId), {isDeleted: true});
         return res.status(204).send();
     }
 };

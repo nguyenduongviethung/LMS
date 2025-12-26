@@ -1,4 +1,4 @@
-import { userService } from "../user/user.service";
+import { UserService } from "../user/user.service";
 import { UserRepository } from "../user/user.repository";
 import { JwtUtil } from "../../shared/utils/jwt.util";
 import { HashUtil } from "../../shared/utils/hash.util";
@@ -8,7 +8,7 @@ import { LoginRequest, LogoutRequest } from "./auth.controller";
 
 export const AuthService = {
     async register(data: CreateUserDTO) {
-        return userService.createUser(data); 
+        return UserService.createUser(data); 
     },
 
     async login({ email, password } : LoginRequest) {

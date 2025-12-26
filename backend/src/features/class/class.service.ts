@@ -57,7 +57,7 @@ export const ClassService = {
         return [...allowedClassIds];
     },
 
-    async canManageUserClass(currentUser: UserIdentity, classId: number): Promise<boolean> {
+    async canManageClass(currentUser: UserIdentity, classId: number): Promise<boolean> {
 
         // ADMIN → full quyền
         if (currentUser.roleName === "admin") {

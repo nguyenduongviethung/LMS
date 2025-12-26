@@ -1,3 +1,6 @@
+import { z } from "zod";
+import { CreateSessionSchema, UpdateSessionSchema } from "./session.schema";
+
 export interface SessionPublicDTO {
     sessionId: number;
     name: string;
@@ -14,19 +17,7 @@ export interface SessionPublicDTO {
         content: {
             contentId: number;
             name: string;
-            description?: string | null;
             contentType: string;
-            deadline?: Date | null;
-            cutoffScore?: number | null;
-            contentFiles: {
-                file: {
-                    fileId: number;
-                    filename: string;
-                    filetype: string;
-                    filesize: number;
-                    uploadedAt: Date;
-                };
-            }[];
         };
     }[];
     templateSession?: {
@@ -37,20 +28,12 @@ export interface SessionPublicDTO {
             content: {
                 contentId: number;
                 name: string;
-                description?: string | null;
                 contentType: string;
-                deadline?: Date | null;
-                cutoffScore?: number | null;
-                contentFiles: {
-                    file: {
-                        fileId: number;
-                        filename: string;
-                        filetype: string;
-                        filesize: number;
-                        uploadedAt: Date;
-                    };
-                }[];
             };
         }[];
     } | null;
 }
+
+export interface CreateSessionDTO extends z.infer<typeof CreateSessionSchema.shape.body> {}
+
+export interface UpdateSessionDTO extends z.infer<typeof UpdateSessionSchema.shape.body> {}

@@ -82,11 +82,12 @@ model State {
 }
 
 model Role {
-    roleId      Int         @id @default(autoincrement())
-    roleName    String
-    roleType    String
-    users       User[]
-    userClasses UserClass[]
+    roleId       Int           @id @default(autoincrement())
+    roleName     String
+    roleType     String
+    users        User[]
+    userClasses  UserClass[]
+    contentFiles ContentFile[]
 }
 
 model Review {
@@ -204,8 +205,9 @@ model Content {
     name                    String
     description             String?
     contentType             String
-    deadline                DateTime
-    cutoffScore             Float
+    deadline                DateTime?
+    cutoffScore             Float?
+    createdAt               DateTime                 @default(now())
     sessionContents         SessionContent[]
     templateSessionContents TemplateSessionContent[]
     taskResults             TaskResult[]
@@ -227,7 +229,8 @@ model ContentFile {
     content   Content @relation(fields: [contentId], references: [contentId])
     fileId    Int
     file      File    @relation(fields: [fileId], references: [fileId])
-    fileRole  String
+    roleId    Int
+    role      Role    @relation(fields: [roleId], references: [roleId])
 
     @@id([contentId, fileId])
 }

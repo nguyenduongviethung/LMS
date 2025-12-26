@@ -20,23 +20,7 @@ export const sessionPublicSelect = Prisma.validator<Prisma.SessionSelect>()({
                 select: {
                     contentId: true,
                     name: true,
-                    description: true,
-                    contentType: true,
-                    deadline: true,
-                    cutoffScore: true,
-                    contentFiles: {
-                        select: {
-                            file: {
-                                select: {
-                                    fileId: true,
-                                    filename: true,
-                                    filetype: true,
-                                    filesize: true,
-                                    uploadedAt: true
-                                }
-                            }
-                        }
-                    }
+                    contentType: true
                 }
             }
         }
@@ -53,23 +37,7 @@ export const sessionPublicSelect = Prisma.validator<Prisma.SessionSelect>()({
                         select: {
                             contentId: true,
                             name: true,
-                            description: true,
-                            contentType: true,
-                            deadline: true,
-                            cutoffScore: true,
-                            contentFiles: {
-                                select: {
-                                    file: {
-                                        select: {
-                                            fileId: true,
-                                            filename: true,
-                                            filetype: true,
-                                            filesize: true,
-                                            uploadedAt: true
-                                        }
-                                    }
-                                }
-                            }
+                            contentType: true
                         }
                     }
                 }
