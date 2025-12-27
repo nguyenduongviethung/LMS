@@ -1,14 +1,13 @@
-import express from 'express';
-import { prisma } from './shared/prisma/client';
+import express from "express";
+import routes from "./routes";
+import { errorHandler } from "./common/middlewares/errorHandler";
 
-const app = express();
+export const app = express();
+
 app.use(express.json());
 
-app.get('/health', async (req, res) => {
-  const now = await prisma.$queryRaw`SELECT NOW();`;
-  res.json({ status: 'ok', time: now });
-});
+// routes
+app.use("/api", routes);
 
-app.listen(3000, () => {
-  console.log('Server running on port 3000');
-});
+// error handler – LUÔN CUỐI
+app.use(errorHandler);

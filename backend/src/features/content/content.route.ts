@@ -4,5 +4,7 @@ import { authenticate } from "../../common/middlewares/authenticate";
 
 const router = Router();
 
-router.post("/", authenticate, contentController.createContent);
-router.put("/:id", authenticate, contentController.updateContent);
+router.use(authenticate);
+
+router.post("/", contentController.createContent);
+router.put("/:id", contentController.updateContent);

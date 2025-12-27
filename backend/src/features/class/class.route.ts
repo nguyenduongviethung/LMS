@@ -4,9 +4,11 @@ import { authenticate } from "../../common/middlewares/authenticate";
 
 const router = Router();
 
-router.get("/", authenticate, classController.getClasses);
-router.post("/", authenticate, classController.createClass);
-router.put("/:id", authenticate, classController.updateClass);
-router.delete("/:id", authenticate, classController.deleteClass);
+router.use(authenticate);
+
+router.get("/", classController.getClasses);
+router.post("/", classController.createClass);
+router.put("/:id", classController.updateClass);
+router.delete("/:id", classController.deleteClass);
 
 export default router;

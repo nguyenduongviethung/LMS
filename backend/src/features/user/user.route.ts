@@ -3,9 +3,12 @@ import { userController } from "./user.controller";
 import { authenticate } from "../../common/middlewares/authenticate";
 
 const router = Router();
-router.get("/", authenticate, userController.getUsers);
-router.post("/", authenticate, userController.createUser);
-router.put("/:userId", authenticate, userController.updateUser);
-router.delete("/:userId", authenticate, userController.deleteUser);
+
+router.use(authenticate);
+
+router.get("/", userController.getUsers);
+router.post("/", userController.createUser);
+router.put("/:userId", userController.updateUser);
+router.delete("/:userId", userController.deleteUser);
 
 export default router;
