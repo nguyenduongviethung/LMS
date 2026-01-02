@@ -20,15 +20,33 @@ export const ClassRepository = {
         });
     },
 
-    async findByUser(userId: number): Promise<ClassPublicDTO[]> {
+    async findBySessionId(sessionId: number): Promise<ClassPublicDTO[]> {
         return prisma.class.findMany({
-            where: { 
-                deletedAt: null,
-                userClasses: {
+            where: {
+                sessions: {
                     some: {
-                        userId
-                    }
-                }
+                        sessionId,
+                    },
+                },
+                deletedAt: null,
+            },
+            select: classPublicSelect,
+        });
+    },
+
+    async findByContentId(contentId: number): Promise<ClassPublicDTO[]> {
+        return prisma.class.findMany({
+            where: {
+                sessions: {
+                    some: {
+                        sessionContents: {
+                            some: {
+                                contentId,
+                            },
+                        },
+                    },
+                },
+                deletedAt: null,
             },
             select: classPublicSelect,
         });

@@ -52,12 +52,20 @@ export const ClassService = {
         return [...allowedClassIds];
     },
 
+    async getBySessionId(sessionId: number): Promise<ClassPublicDTO[]> {
+        return ClassRepository.findBySessionId(sessionId);
+    },
+
+    async getByContentId(contentId: number): Promise<ClassPublicDTO[]> {
+        return ClassRepository.findByContentId(contentId);
+    },
+
     async getClasses(currentUser: UserIdentity): Promise<ClassPublicDTO[]> {
         return ClassRepository.findByIds(await this.getAllowedClassIds(currentUser));
     },
 
     async create(currentUser: UserIdentity, payload: CreateClassDTO): Promise<ClassPublicDTO> {
-        if (!await AuthorizationService.canCreateClass(currentUser.userId)) {
+        if (!await AuthorizationService.canCreateClass(currentUser)) {
             throw new ForbiddenError("You do not have permission to create a class");
         }
 
@@ -68,14 +76,14 @@ export const ClassService = {
     },
 
     async update(currentUser: UserIdentity, classId: number, payload: UpdateClassDTO): Promise<ClassPublicDTO> {
-        if (!await AuthorizationService.canUpdateClass(currentUser.userId, classId)) {
+        if (!await AuthorizationService.canUpdateClass(currentUser, classId)) {
             throw new ForbiddenError("You do not have permission to update this class");
         }
         return ClassRepository.update(classId, payload);
     },
 
     async delete(currentUser: UserIdentity, classId: number): Promise<ClassPublicDTO> {
-        if (!await AuthorizationService.canDeleteClass(currentUser.userId)) {
+        if (!await AuthorizationService.canDeleteClass(currentUser)) {
             throw new ForbiddenError("You do not have permission to delete this class");
         }
         return ClassRepository.update(classId, { deletedAt: new Date() });

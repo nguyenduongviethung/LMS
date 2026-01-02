@@ -5,8 +5,7 @@ export const CreateUserClassSchema = z.object({
     body: z.object({
         userId: z.int(),
         classId: z.int(),
-        roleId: z.int(),
-        stateId: z.int()
+        role: z.enum(UserClassRole)
     })
 });
 

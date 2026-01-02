@@ -1,4 +1,4 @@
-import { CreateUserClassSchema, UpdateUserClassSchema } from "../../../../shared/src/userClass/userClass.schema";
+import { CreateUserClassSchema, UpdateUserClassSchema } from "./userClass.schema";
 import { z } from "zod"
 
 export interface UserClassPublicDTO {

@@ -4,16 +4,23 @@ import { userClassPublicSelect } from "./userClass.select";
 import { UserClassPublicDTO, CreateUserClassDTO, UpdateUserClassDTO } from "backend/src/features/userClass/userClass.model";
 
 export const userClassRepository = {
-    async findByUserId(userId: number): Promise<{ classId: number; role: UserClassRole }[]> {
+    async findById(userClassId: number): Promise<UserClassPublicDTO | null> {
+        return prisma.userClass.findFirst({
+            where: {
+                userClassId,
+                deletedAt: null,
+            },
+            select: userClassPublicSelect,
+        });
+    },
+    
+    async findByUserId(userId: number): Promise<UserClassPublicDTO[]> {
         return prisma.userClass.findMany({
             where: {
                 userId,
                 deletedAt: null,
             },
-            select: {
-                classId: true,
-                role: true,
-            },
+            select: userClassPublicSelect,
         });
     },
 

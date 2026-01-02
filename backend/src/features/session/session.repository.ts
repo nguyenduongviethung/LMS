@@ -24,6 +24,20 @@ export const SessionRepository = {
         });
     },
 
+    async findByContentId(contentId: number): Promise<SessionPublicDTO[]> {
+        return prisma.session.findMany({
+            where: {
+                deletedAt: null,
+                sessionContents: {
+                    some: {
+                        contentId
+                    }
+                }
+            },
+            select: sessionPublicSelect,
+        });
+    },
+
     async createSesion(data: CreateSessionDTO): Promise<SessionPublicDTO> {
         return prisma.session.create({
             data,

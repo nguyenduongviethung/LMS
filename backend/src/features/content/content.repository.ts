@@ -44,6 +44,19 @@ export const ContentRepository = {
         });
     },
 
+    async findByFileId(fileId: number): Promise<ContentPublicDTO[]> {
+        return prisma.content.findMany({
+            where: {
+                contentFiles: {
+                    some: {
+                        fileId,
+                    },
+                },
+            },
+            select: contentPublicSelect,
+        });
+    },
+
     async createContent(data: CreateContentDTO): Promise<ContentPublicDTO> {
         return prisma.content.create({
             data,

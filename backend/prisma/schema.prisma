@@ -212,7 +212,7 @@ enum ProgramStatus {
 }
 
 model UserProgram {
-    UserProgramId Int             @id @default(autoincrement())
+    userProgramId Int             @id @default(autoincrement())
     userId        Int
     user          User            @relation(fields: [userId], references: [userId])
     programId     Int

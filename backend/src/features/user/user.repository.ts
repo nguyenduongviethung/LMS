@@ -19,7 +19,7 @@ export const UserRepository = {
         });
     },
 
-    findByIds(userIds: number[]): Promise<UserPublicDTO[]> {
+    async findByIds(userIds: number[]): Promise<UserPublicDTO[]> {
         return prisma.user.findMany({
             where: {
                 userId: { in: userIds },
@@ -43,7 +43,7 @@ export const UserRepository = {
         });
     },
 
-    update: async (id: number, data: UpdateUserDTO): Promise<UserPublicDTO> => {
+    async update (id: number, data: UpdateUserDTO): Promise<UserPublicDTO> {
         return prisma.user.update({
             data,
             where: { userId: id },
@@ -59,11 +59,11 @@ export const UserRepository = {
         return prisma.user.update({ where: { userId: userId }, data: { refreshToken: null } });
     },
 
-    saveOtp(email: string, otp: string) {
-        return prisma.user.update({ where: { email }, data: { otp } });
-    },
+    // saveOtp(email: string, otp: string) {
+    //     return prisma.user.update({ where: { email }, data: { otp } });
+    // },
 
-    verifyOtp(email: string, otp: string) {
-        return prisma.user.findFirst({ where: { email, otp } });
-    }
+    // verifyOtp(email: string, otp: string) {
+    //     return prisma.user.findFirst({ where: { email, otp } });
+    // }
 };

@@ -8,17 +8,17 @@ export const userController = {
         res.json(users);
     },
 
-    createUser: async (req: Request<{}, {}, CreateUserDTO>, res: Response) => {
+    async createUser (req: Request<{}, {}, CreateUserDTO>, res: Response) {
         const created = await UserService.createUser(req.user!, req.body);
         return res.status(201).json({ data: created });
     },
 
-    updateUser: async (req: Request<{ id: string }, {}, UpdateUserDTO>, res: Response) => {
+    async updateUser (req: Request<{ id: string }, {}, UpdateUserDTO>, res: Response) {
         const updated = await UserService.updateUser(req.user!, parseInt(req.params.id), req.body);
         return res.json({ data: updated });
     },
 
-    deleteUser: async (req: Request<{ id: string }>, res: Response) => {
+    async deleteUser (req: Request<{ id: string }>, res: Response) {
         await UserService.deleteUser(req.user!, parseInt(req.params.id));
         return res.status(204).send();
     }

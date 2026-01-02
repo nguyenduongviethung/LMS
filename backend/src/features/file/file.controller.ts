@@ -7,7 +7,7 @@ export const fileController = {
         if (!req.file) {
             throw new BadRequestError("No file uploaded");
         }
-        const result = await FileService.uploadFile(req.file);
+        const result = await FileService.uploadFile(req.user!, req.file);
         res.status(201).json(result);
     }
 };

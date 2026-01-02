@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CreateSessionSchema, UpdateSessionSchema } from "../../../../shared/src/session/session.schema";
+import { CreateSessionSchema, UpdateSessionSchema } from "./session.schema";
 
 export interface SessionPublicDTO {
     sessionId: number;

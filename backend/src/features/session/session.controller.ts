@@ -13,7 +13,7 @@ export const sessionController = {
 
     async getContentsBySessionId(req: Request<{ sessionId: string }>, res: Response) {
         const sessionId = parseInt(req.params.sessionId);
-        const contents = await ContentService.getBySessionId(sessionId);
+        const contents = await ContentService.getBySessionId(req.user!, sessionId);
         res.json(contents);
     },
 

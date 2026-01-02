@@ -3,14 +3,22 @@ import { ContentFileService } from "../contentFile/contentFile.service";
 import { CreateContentDTO, UpdateContentDTO, ContentPublicDTO } from "backend/src/features/content/content.model";
 import { AuthorizationService } from "../authorization/authorization.service";
 import { ForbiddenError } from "backend/src/common/errors/ForbiddenError";
+import { UserIdentity } from "../user/user.model";
 
 export const ContentService = {
-    async getBySessionId(classId: number): Promise<ContentPublicDTO[]> {
-        return ContentRepository.findBySessionId(classId);
+    async getBySessionId(currentUser: UserIdentity, sessionId: number): Promise<ContentPublicDTO[]> {
+        if (!(await AuthorizationService.canGetSession(currentUser, sessionId))) {
+            throw new ForbiddenError("Forbidden: You do not have permission to access contents of this session.");
+        }
+        return ContentRepository.findBySessionId(sessionId);
     },
 
-    async createContent(userId: number, data: CreateContentDTO): Promise<ContentPublicDTO> {
-        if (!(await AuthorizationService.canCreateContent(userId))) {
+    async getByFileId(fileId: number): Promise<ContentPublicDTO[]> {
+        return ContentRepository.findByFileId(fileId);
+    },
+
+    async createContent(currentUser: UserIdentity, data: CreateContentDTO): Promise<ContentPublicDTO> {
+        if (!(await AuthorizationService.canCreateContent(currentUser))) {
             throw new ForbiddenError("Forbidden: You do not have permission to create content.");
         }
         const content = await ContentRepository.createContent(data);
@@ -24,8 +32,8 @@ export const ContentService = {
         return content;
     },
 
-    async updateContent(userId: number, contentId: number, data: UpdateContentDTO): Promise<ContentPublicDTO> {
-        if (!(await AuthorizationService.canUpdateContent(userId, contentId))) {
+    async updateContent(currentUser: UserIdentity, contentId: number, data: UpdateContentDTO): Promise<ContentPublicDTO> {
+        if (!(await AuthorizationService.canUpdateContent(currentUser, contentId))) {
             throw new ForbiddenError("Forbidden: You do not have permission to update this content.");
         }
         data.files?.create?.forEach(async (file) => {

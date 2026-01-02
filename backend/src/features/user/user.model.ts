@@ -1,5 +1,6 @@
 import { CreateUserSchema, UpdateUserSchema } from "./user.schema"
 import { z } from "zod"
+import { UserRole } from "@prisma/client";
 
 export interface UserIdentity {
     userId: number;
@@ -12,7 +13,7 @@ export interface UserPublicDTO {
     birthDate?: Date;
     studyPlace?: string | null;
     workPlace?: string | null;
-    role: string;
+    role: UserRole;
     status: string;
     userClasses: {
         class: {

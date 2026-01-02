@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { UserClassService } from './userClass.service';
 import { CreateUserClassDTO, UpdateUserClassDTO } from 'backend/src/features/userClass/userClass.model';
-import { UnauthorizedError } from 'backend/src/common/errors/UnauthorizedError';
 
 export const userClassController = {
     createUserClass: async (req: Request<{}, {}, CreateUserClassDTO>, res: Response) => {
@@ -15,10 +14,7 @@ export const userClassController = {
     },
 
     deleteUserClass: async (req: Request<{ userClassId: string }>, res: Response) => {
-        if (!req.user) {
-            throw new UnauthorizedError();
-        }
-        await UserClassService.updateUserClass(req.user, parseInt(req.params.userClassId), { deletedAt: new Date() });
+        await UserClassService.updateUserClass(req.user!, parseInt(req.params.userClassId), { deletedAt: new Date() });
         return res.status(204).send();
     }
 };
