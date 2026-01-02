@@ -1,6 +1,6 @@
 import { prisma } from '../../shared/prisma/client';
 import { userPublicSelect } from './user.select';
-import { UserIdentity, UserPublicDTO, CreateUserDTO, UpdateUserDTO } from '@shared/src/user/user.model';
+import { UserIdentity, UserPublicDTO, CreateUserDTO, UpdateUserDTO } from 'backend/src/features/user/user.model';
 
 export const UserRepository = {
     async findByEmail(email: string): Promise<UserIdentity & { password: string }> {
@@ -9,16 +9,12 @@ export const UserRepository = {
             select: {
                 userId: true,
                 password: true,
-                role: {
-                    select: {
-                        roleName: true,
-                    },
-                },
+                role: true,
             },
         });
         return ({
             userId: user.userId,
-            roleName: user.role.roleName,
+            role: user.role,
             password: user.password,
         });
     },
@@ -27,7 +23,7 @@ export const UserRepository = {
         return prisma.user.findMany({
             where: {
                 userId: { in: userIds },
-                isDeleted: false,
+                deletedAt: null
             },
             select: userPublicSelect,
         });
@@ -35,7 +31,7 @@ export const UserRepository = {
 
     async findAll(): Promise<UserPublicDTO[]> {
         return prisma.user.findMany({
-            where: { isDeleted: false },
+            where: { deletedAt: null },
             select: userPublicSelect
         });
     },

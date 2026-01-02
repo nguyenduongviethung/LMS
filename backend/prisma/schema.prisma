@@ -13,40 +13,50 @@ datasource db {
 }
 
 model User {
-    userId       Int          @id @default(autoincrement())
-    stateId      Int
-    state        State        @relation(fields: [stateId], references: [stateId])
-    roleId       Int
-    role         Role         @relation(fields: [roleId], references: [roleId])
-    name         String
-    birthDate    DateTime?
-    email        String       @unique
-    phone        String?
-    password     String
-    studyPlace   String?
-    workPlace    String?
-    refreshToken String?
-    otp          String?
-    isDeleted    Boolean      @default(false)
-    createdAt    DateTime     @default(now())
-    updatedAt    DateTime     @updatedAt
-    userClasses  UserClass[]
-    reviews      Review[]
-    tuitions     Tuition[]
-    attendances  Attendance[]
-    taskResults  TaskResult[]
+    userId          Int           @id @default(autoincrement())
+    status          UserStatus    @default(ACTIVE)
+    role            UserRole      @default(USER)
+    name            String
+    birthDate       DateTime?
+    email           String        @unique
+    phone           String?
+    password        String
+    studyPlace      String?
+    workPlace       String?
+    refreshToken    String?
+    otp             String?
+    createdAt       DateTime      @default(now())
+    updatedAt       DateTime      @updatedAt
+    deletedAt       DateTime?
+    userClasses     UserClass[]
+    studentReviews  Review[]      @relation("StudentReview")
+    reviewerReviews Review[]      @relation("ReviewerReview")
+    tuitions        Tuition[]
+    attendances     Attendance[]
+    taskResults     TaskResult[]
+    userPrograms    UserProgram[]
+}
+
+enum UserRole {
+    ADMIN
+    USER
+}
+
+enum UserStatus {
+    ACTIVE
+    INACTIVE
+    SUSPENDED
 }
 
 model Class {
     classId        Int         @id @default(autoincrement())
-    stateId        Int
-    state          State       @relation(fields: [stateId], references: [stateId])
+    status         ClassStatus @default(OPEN)
     name           String
     description    String?
     defaultTuition Float?
-    isDeleted      Boolean     @default(false)
     createdAt      DateTime    @default(now())
     updatedAt      DateTime    @updatedAt
+    deletedAt      DateTime?
     userClasses    UserClass[]
     reviews        Review[]
     tuitions       Tuition[]
@@ -54,46 +64,37 @@ model Class {
     sessions       Session[]
 }
 
+enum ClassStatus {
+    OPEN
+    CLOSED
+    ARCHIVED
+}
+
 model UserClass {
-    userId     Int
-    user       User     @relation(fields: [userId], references: [userId])
-    classId    Int
-    class      Class    @relation(fields: [classId], references: [classId])
-    stateId    Int
-    state      State    @relation(fields: [stateId], references: [stateId])
-    roleId     Int
-    role       Role     @relation(fields: [roleId], references: [roleId])
-    enrolledAt DateTime @default(now())
-    isDeleted  Boolean  @default(false)
-
-    @@id([userId, classId])
+    userClassId Int           @id @default(autoincrement())
+    userId      Int
+    user        User          @relation(fields: [userId], references: [userId])
+    classId     Int
+    class       Class         @relation(fields: [classId], references: [classId])
+    role        UserClassRole @default(STUDENT)
+    enrolledAt  DateTime      @default(now())
+    createdAt   DateTime      @default(now())
+    updatedAt   DateTime      @updatedAt
+    deletedAt   DateTime?
 }
 
-model State {
-    stateId     Int          @id @default(autoincrement())
-    stateName   String
-    stateType   String
-    users       User[]
-    classes     Class[]
-    userClasses UserClass[]
-    tuitions    Tuition[]
-    attendances Attendance[]
-    taskResults TaskResult[]
-}
-
-model Role {
-    roleId       Int           @id @default(autoincrement())
-    roleName     String
-    roleType     String
-    users        User[]
-    userClasses  UserClass[]
-    contentFiles ContentFile[]
+enum UserClassRole {
+    STUDENT
+    TEACHER
+    TEACHER_ASSISTANT
 }
 
 model Review {
     reviewId      Int     @default(autoincrement())
-    userId        Int
-    user          User    @relation(fields: [userId], references: [userId])
+    studentId     Int
+    student       User    @relation("StudentReview", fields: [studentId], references: [userId])
+    reviewerId    Int
+    reviewer      User    @relation("ReviewerReview", fields: [reviewerId], references: [userId])
     classId       Int
     class         Class   @relation(fields: [classId], references: [classId])
     month         Int
@@ -105,22 +106,27 @@ model Review {
     goodKnowledge String?
     badKnowledge  String?
 
-    @@id([userId, classId, month, year])
+    @@id([studentId, classId, reviewerId, month, year])
 }
 
 model Tuition {
-    tuitionId Int   @default(autoincrement())
+    tuitionId Int           @default(autoincrement())
     userId    Int
-    user      User  @relation(fields: [userId], references: [userId])
+    user      User          @relation(fields: [userId], references: [userId])
     classId   Int
-    class     Class @relation(fields: [classId], references: [classId])
-    stateId   Int
-    state     State @relation(fields: [stateId], references: [stateId])
+    class     Class         @relation(fields: [classId], references: [classId])
+    status    TuitionStatus @default(UNPAID)
     month     Int
     year      Int
     amount    Float
 
     @@id([userId, classId, month, year])
+}
+
+enum TuitionStatus {
+    PAID
+    UNPAID
+    PENDING
 }
 
 model Schedule {
@@ -142,42 +148,96 @@ model Session {
     description       String?
     startTime         DateTime?
     duration          Int?
-    isDeleted         Boolean          @default(false)
     createdAt         DateTime         @default(now())
     updatedAt         DateTime         @updatedAt
+    deletedAt         DateTime?
     attendances       Attendance[]
     sessionContents   SessionContent[]
 }
 
 model Attendance {
-    userId    Int
-    user      User    @relation(fields: [userId], references: [userId])
-    sessionId Int
-    session   Session @relation(fields: [sessionId], references: [sessionId])
-    stateId   Int
-    state     State   @relation(fields: [stateId], references: [stateId])
-    note      String?
+    userId         Int
+    user           User             @relation(fields: [userId], references: [userId])
+    sessionId      Int
+    session        Session          @relation(fields: [sessionId], references: [sessionId])
+    status         AttendanceStatus @default(ABSENT)
+    note           String?
+    statusStatusId Int?
 
     @@id([userId, sessionId])
 }
 
+enum AttendanceStatus {
+    PRESENT
+    ABSENT
+    EXCUSED
+}
+
 model TaskResult {
     userId    Int
-    user      User    @relation(fields: [userId], references: [userId])
+    user      User             @relation(fields: [userId], references: [userId])
     contentId Int
-    content   Content @relation(fields: [contentId], references: [contentId])
-    stateId   Int
-    state     State   @relation(fields: [stateId], references: [stateId])
+    content   Content          @relation(fields: [contentId], references: [contentId])
+    status    TaskResultStatus @default(PENDING)
     score     Float?
     reviews   String?
 
     @@id([userId, contentId])
 }
 
+enum TaskResultStatus {
+    COMPLETED
+    PENDING
+    OVERDUE
+}
+
+model Program {
+    programId        Int               @id @default(autoincrement())
+    name             String
+    description      String?
+    status           ProgramStatus     @default(DRAFT)
+    createdAt        DateTime          @default(now())
+    updatedAt        DateTime          @updatedAt
+    deletedAt        DateTime?
+    templateSessions TemplateSession[]
+    userPrograms     UserProgram[]
+    statusStatusId   Int?
+}
+
+enum ProgramStatus {
+    DRAFT
+    ACTIVE
+    DEPRECATED
+    ARCHIVED
+}
+
+model UserProgram {
+    UserProgramId Int             @id @default(autoincrement())
+    userId        Int
+    user          User            @relation(fields: [userId], references: [userId])
+    programId     Int
+    program       Program         @relation(fields: [programId], references: [programId])
+    role          UserProgramRole @default(VIEWER)
+    createdAt     DateTime        @default(now())
+    updatedAt     DateTime        @updatedAt
+    deletedAt     DateTime?
+}
+
+enum UserProgramRole {
+    OWNER
+    EDITOR
+    VIEWER
+}
+
 model TemplateSession {
     templateSessionId       Int                      @id @default(autoincrement())
     name                    String
     description             String?
+    programId               Int
+    program                 Program                  @relation(fields: [programId], references: [programId])
+    createdAt               DateTime                 @default(now())
+    updatedAt               DateTime                 @updatedAt
+    deletedAt               DateTime?
     sessions                Session[]
     templateSessionContents TemplateSessionContent[]
 }
@@ -207,11 +267,21 @@ model Content {
     contentType             String
     deadline                DateTime?
     cutoffScore             Float?
+    role                    ContentRole             @default(LECTURE_MATERIAL)
     createdAt               DateTime                 @default(now())
+    updatedAt               DateTime                 @updatedAt
+    deletedAt               DateTime?
     sessionContents         SessionContent[]
     templateSessionContents TemplateSessionContent[]
     taskResults             TaskResult[]
     contentFiles            ContentFile[]
+}
+
+enum ContentRole {
+    LECTURE_MATERIAL
+    ASSIGNMENT
+    HOMEWORK
+    QUIZ
 }
 
 model File {
@@ -226,11 +296,16 @@ model File {
 
 model ContentFile {
     contentId Int
-    content   Content @relation(fields: [contentId], references: [contentId])
+    content   Content         @relation(fields: [contentId], references: [contentId])
     fileId    Int
-    file      File    @relation(fields: [fileId], references: [fileId])
-    roleId    Int
-    role      Role    @relation(fields: [roleId], references: [roleId])
+    file      File            @relation(fields: [fileId], references: [fileId])
+    role      ContentFileRole @default(LECTURE_NOTE)
 
     @@id([contentId, fileId])
+}
+
+enum ContentFileRole {
+    LECTURE_NOTE
+    ASSIGNMENT
+    SUBMISSION_LINK
 }

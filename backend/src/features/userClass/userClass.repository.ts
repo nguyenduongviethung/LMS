@@ -1,45 +1,40 @@
+import { UserClassRole } from "@prisma/client";
 import { prisma } from "../../shared/prisma/client";
 import { userClassPublicSelect } from "./userClass.select";
-import { UserClassPublicDTO, CreateUserClassDTO, UpdateUserClassDTO } from "@shared/src/userClass/userClass.model";
+import { UserClassPublicDTO, CreateUserClassDTO, UpdateUserClassDTO } from "backend/src/features/userClass/userClass.model";
 
 export const userClassRepository = {
-    findByUserId(userId: number) {
+    async findByUserId(userId: number): Promise<{ classId: number; role: UserClassRole }[]> {
         return prisma.userClass.findMany({
             where: {
                 userId,
-                isDeleted: false,
+                deletedAt: null,
             },
             select: {
                 classId: true,
-                role: {
-                    select: {
-                        roleName: true,
-                    },
-                },
+                role: true,
             },
         });
     },
 
-    findUsersByClassIds(classIds: number[]) {
+    async findUsersByClassIds(classIds: number[]): Promise<number[]> {
         return prisma.userClass.findMany({
             where: {
                 classId: { in: classIds },
-                isDeleted: false,
+                deletedAt: null,
             },
             select: {
                 userId: true,
             },
-        });
+        }).then(ucs => ucs.map(uc => uc.userId));
     },
 
-    findTeachersByClassIds(classIds: number[]) {
+    async findTeachersByClassIds(classIds: number[]): Promise<{ userId: number; classId: number }[]> {
         return prisma.userClass.findMany({
             where: {
                 classId: { in: classIds },
-                isDeleted: false,
-                role: {
-                    roleName: "teacher",
-                },
+                deletedAt: null,
+                role: UserClassRole.TEACHER, 
             },
             select: {
                 userId: true,
@@ -48,60 +43,41 @@ export const userClassRepository = {
         });
     },
 
-    findClassesByTeacherIds(teacherIds: number []) {
+    async findClassesByTeacherIds(teacherIds: number []): Promise<number[]> {
         return prisma.userClass.findMany({
             where: {
                 userId: { in: teacherIds },
-                isDeleted: false,
-                role: {
-                    roleName: "teacher",
-                },
+                deletedAt: null,
+                role: UserClassRole.TEACHER,
             },
             select: {
                 classId: true,
             },
-        });
+        }).then(ucs => ucs.map(uc => uc.classId));
     },
 
-    findByUserIdAndClassId(userId: number, classId: number): Promise<UserClassPublicDTO | null> {
-        return prisma.userClass.findUnique({
+    async findByUserIdAndClassId(userId: number, classId: number): Promise<UserClassPublicDTO[]> {
+        return prisma.userClass.findMany({
             where: {
-                userId_classId: {
-                    userId: userId,
-                    classId: classId
-                }
+                userId,
+                classId,
+                deletedAt: null,
             },
             select: userClassPublicSelect
         });
     },
 
     async create(data: CreateUserClassDTO): Promise<UserClassPublicDTO> {
-        const existing = await prisma.userClass.findUnique({
-            where: {
-                userId_classId: {
-                    userId: data.userId,
-                    classId: data.classId,
-                },
-            },
+        return prisma.userClass.create({
+            data,
+            select: userClassPublicSelect,
         });
-
-        if (!existing) {
-            return prisma.userClass.create({
-                data,
-                select: userClassPublicSelect,
-            });
-        }
-
-        return this.update(data.userId, data.classId, data);
     },
 
-    update(userId: number, classId: number, data: UpdateUserClassDTO): Promise<UserClassPublicDTO> {
+    async update(userClassId: number, data: UpdateUserClassDTO): Promise<UserClassPublicDTO> {
         return prisma.userClass.update({
             where: { 
-                userId_classId: {
-                    userId,
-                    classId
-                }
+                userClassId: userClassId,
             },
             data,
             select: userClassPublicSelect,

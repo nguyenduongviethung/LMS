@@ -1,11 +1,11 @@
 import { prisma } from '../../shared/prisma/client';
 import { classPublicSelect } from './class.select';
-import { ClassPublicDTO, CreateClassDTO, UpdateClassDTO } from '@shared/src/class/class.model';
+import { ClassPublicDTO, CreateClassDTO, UpdateClassDTO } from 'backend/src/features/class/class.model';
 
 export const ClassRepository = {
     async findAllIds(): Promise<number[]> {
         return prisma.class.findMany({
-            where: { isDeleted: false },
+            where: { deletedAt: null },
             select: { classId: true },
         }).then(classes => classes.map(c => c.classId));
     },
@@ -13,7 +13,7 @@ export const ClassRepository = {
     async findByIds(classIds: number[]): Promise<ClassPublicDTO[]> {
         return prisma.class.findMany({
             where: { 
-                isDeleted: false,
+                deletedAt: null,
                 classId: { in: classIds }
             },
             select: classPublicSelect,
@@ -23,7 +23,7 @@ export const ClassRepository = {
     async findByUser(userId: number): Promise<ClassPublicDTO[]> {
         return prisma.class.findMany({
             where: { 
-                isDeleted: false,
+                deletedAt: null,
                 userClasses: {
                     some: {
                         userId

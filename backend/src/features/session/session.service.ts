@@ -1,8 +1,9 @@
 import { SessionRepository } from "./session.repository";
-import { UserIdentity } from "@shared/src/user/user.model";
+import { UserIdentity } from "backend/src/features/user/user.model";
 import { ClassService } from "../class/class.service";
 import { SessionContentService } from "../sessionContent/sessionContent.service";
-import { CreateSessionDTO, SessionPublicDTO, UpdateSessionDTO } from "@shared/src/session/session.model";
+import { CreateSessionDTO, SessionPublicDTO, UpdateSessionDTO } from "backend/src/features/session/session.model";
+import { AuthorizationService } from "../authorization/authorization.service";
 
 export const SessionService = {
     async getSessions(currentUser: UserIdentity) {
@@ -10,14 +11,12 @@ export const SessionService = {
         return SessionRepository.findByClassIds(allowedClassIds);
     },
 
-    async createSession(data: CreateSessionDTO, currentUser: UserIdentity): Promise<SessionPublicDTO> {
-        // check permission
-        const canManageUserClass = await ClassService.canManageClass(currentUser, data.classId);
-        if (!canManageUserClass) {
-            throw new Error("Unauthorized to create session for this class");
+    async createSession(currentUser: UserIdentity, data: CreateSessionDTO): Promise<SessionPublicDTO> {
+        if (!await AuthorizationService.canManageSession(currentUser.userId, data.classId)) {
+            throw new Error("Unauthorized");
         }
         const session = await SessionRepository.createSesion(data);
-        data.contents?.forEach(async content => {
+        data.contents?.create?.forEach(async content => {
             await SessionContentService.create({
                 sessionId: session.sessionId,
                 contentId: content.contentId
@@ -26,18 +25,27 @@ export const SessionService = {
         return session;
     },
 
-    async updateSession(sessionId: number, data: UpdateSessionDTO): Promise<SessionPublicDTO> {
-        await SessionContentService.deleteBySessionIds([sessionId]);
-        data.contents?.forEach(async (content) => {
+    async updateSession(currentUser: UserIdentity, sessionId: number, data: UpdateSessionDTO): Promise<SessionPublicDTO> {
+        if (!await AuthorizationService.canManageSession(currentUser.userId!, data.classId!)) {
+            throw new Error("Unauthorized");
+        }
+        data.contents?.create?.forEach(async (content) => {
             await SessionContentService.create({
                 sessionId,
                 contentId: content.contentId
             });
         });
+        data.contents?.delete?.forEach(async (contentId) => {
+            await SessionContentService.delete(sessionId, contentId);
+        });
         return SessionRepository.updateSession(sessionId, data);
     },
 
-    async deleteSession(sessionId: number): Promise<SessionPublicDTO> {
-        return SessionRepository.updateSession(sessionId, { isDeleted: true });
+    async deleteSession(currentUser: UserIdentity, sessionId: number): Promise<SessionPublicDTO> {
+        const session = await SessionRepository.findBySessionId(sessionId);
+        if (!await AuthorizationService.canManageSession(currentUser.userId, session.class.classId)) {
+            throw new Error("Unauthorized");
+        }
+        return SessionRepository.updateSession(sessionId, { deletedAt: new Date() } );
     }
 };

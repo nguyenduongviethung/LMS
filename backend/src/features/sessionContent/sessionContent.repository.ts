@@ -1,12 +1,23 @@
 import { prisma } from "backend/src/shared/prisma/client";
 import { sessionContentPublicSelect } from "./sessionContent.select";
-import { CreateSessionContentDTO, SessionContentPublicDTO } from "@shared/src/sessionContent/sessionContent.model";
+import { CreateSessionContentDTO, SessionContentPublicDTO } from "backend/src/features/sessionContent/sessionContent.model";
 
 export const SessionContentRepository = {
     async create(data: CreateSessionContentDTO): Promise<SessionContentPublicDTO> {
         return prisma.sessionContent.create({
             data,
             select: sessionContentPublicSelect
+        });
+    },
+
+    async delete(sessionId: number, contentId: number): Promise<void> {
+        await prisma.sessionContent.delete({
+            where: {
+                sessionId_contentId: {
+                    sessionId,
+                    contentId
+                }
+            }
         });
     },
 

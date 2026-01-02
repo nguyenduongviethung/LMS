@@ -1,63 +1,20 @@
 import { UserRepository } from "./user.repository";
-import { userClassRepository } from "../userClass/userClass.repository";
-import { UserIdentity, CreateUserDTO, UpdateUserDTO } from "@shared/src/user/user.model";
+import { UserIdentity, UserPublicDTO, CreateUserDTO, UpdateUserDTO } from "backend/src/features/user/user.model";
+import { AuthorizationService } from "../authorization/authorization.service";
 import bcrypt from "bcrypt";
 
 export const UserService = {
-    async getUsers(currentUser: UserIdentity) {
-        // ADMIN
-        if (currentUser.roleName === "admin") {
-            return UserRepository.findAll();
+    async getUsers(currentUser: UserIdentity): Promise<UserPublicDTO[]> {
+        if (! await AuthorizationService.canGetAllUsers(currentUser.userId)) {
+            return UserRepository.findByIds([currentUser.userId]);
         }
-
-        const userClasses = await userClassRepository.findByUserId(currentUser.userId);
-
-        const teacherClassIds = new Set<number>([currentUser.userId]);
-        const taClassIds = new Set<number>();
-
-        for (const uc of userClasses) {
-            if (uc.role.roleName === "teacher") {
-                teacherClassIds.add(uc.classId);
-            }
-            if (uc.role.roleName === "teacher_assistant") {
-                taClassIds.add(uc.classId);
-            }
-        }
-
-        const allowedUserIds = new Set<number>();
-
-        // teacher → toàn bộ user trong lớp mình dạy
-        if (teacherClassIds.size > 0) {
-            const users = await userClassRepository.findUsersByClassIds(
-                [...teacherClassIds]
-            );
-            users.forEach(u => allowedUserIds.add(u.userId));
-        }
-
-        // teacher_assistant
-        if (taClassIds.size > 0) {
-            // tìm teacher trong các lớp TA tham gia
-            const teachers = await userClassRepository.findTeachersByClassIds(
-                [...taClassIds]
-            );
-
-            const teacherIds = teachers.map(t => t.userId);
-
-            if (teacherIds.length > 0) {
-                // tìm toàn bộ lớp của các teacher này
-                const teacherClasses = await userClassRepository.findClassesByTeacherIds(teacherIds);
-
-                const classIds = teacherClasses.map(c => c.classId);
-
-                const users = await userClassRepository.findUsersByClassIds(classIds);
-                users.forEach(u => allowedUserIds.add(u.userId));
-            }
-        }
-
-        return UserRepository.findByIds([...allowedUserIds]);
+        return UserRepository.findAll();
     },
 
-    createUser: async (data: CreateUserDTO) => {
+    async createUser (currentUser: UserIdentity, data: CreateUserDTO) {
+        if (! await AuthorizationService.canCreateUser(currentUser.userId)) {
+            throw new Error("Unauthorized");
+        }
         const hashed = await bcrypt.hash(data.password, 10);
 
         return UserRepository.create({
@@ -68,11 +25,17 @@ export const UserService = {
         });
     },
 
-    updateUser: async (id: number, data: UpdateUserDTO) => {
-        return UserRepository.update(id, data);
+    async updateUser (currentUser: UserIdentity, userId: number, data: UpdateUserDTO): Promise<UserPublicDTO> {
+        if (! await AuthorizationService.canUpdateUser(currentUser.userId, userId)) {
+            throw new Error("Unauthorized");
+        }
+        return UserRepository.update(userId, data);
     },
 
-    deleteUser: async (id: number) => {
+    async deleteUser (currentUser: UserIdentity, id: number): Promise<UserPublicDTO> {
+        if (! await AuthorizationService.canDeleteUser(currentUser.userId, id)) {
+            throw new Error("Unauthorized");
+        }
         return UserRepository.update(id, { isDeleted: true });
     }
 };

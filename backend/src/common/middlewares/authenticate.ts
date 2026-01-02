@@ -1,24 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { JwtUtil } from "../../shared/utils/jwt.util";
-import { UserIdentity } from "@shared/src/user/user.model";
+import { UnauthorizedError } from "../errors/UnauthorizedError";
 
-declare global {
-    namespace Express {
-        interface Request {
-            user?: UserIdentity;
-        }
-    }
-}
-
-export const authenticate = (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-) => {
+export const authenticate = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({ message: "Unauthorized" });
+        throw new UnauthorizedError();
     }
 
     const token = authHeader.split(" ")[1];
@@ -27,6 +15,6 @@ export const authenticate = (
         req.user = JwtUtil.verifyAccessToken(token);
         next();
     } catch (error) {
-        return res.status(401).json({ message: "Invalid token" });
+        throw new UnauthorizedError("Invalid or expired token");
     }
 };

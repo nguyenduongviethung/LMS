@@ -1,19 +1,15 @@
 import { ClassRepository } from "./class.repository";
-import { ClassPublicDTO, CreateClassDTO, UpdateClassDTO } from "@shared/src/class/class.model";
-import { UserIdentity } from "@shared/src/user/user.model";
+import { ClassPublicDTO, CreateClassDTO, UpdateClassDTO } from "backend/src/features/class/class.model";
+import { UserIdentity } from "backend/src/features/user/user.model";
 import { userClassRepository } from "../userClass/userClass.repository";
+import { ForbiddenError } from "backend/src/common/errors/ForbiddenError";
+import { UserClassRole, UserRole } from "@prisma/client";
+import { AuthorizationService } from "../authorization/authorization.service";
 
 export const ClassService = {
-    async create(payload: CreateClassDTO) {
-        return ClassRepository.create({
-            ...payload,
-            isDeleted: false,
-        } as any);
-    },
-
     async getAllowedClassIds(currentUser: UserIdentity): Promise<number[]> {
         // ADMIN
-        if (currentUser.roleName === "admin") {
+        if (currentUser.role === UserRole.ADMIN) {
             return ClassRepository.findAllIds();
         }
 
@@ -24,13 +20,13 @@ export const ClassService = {
         const allowedClassIds = new Set<number>();
 
         for (const uc of userClasses) {
-            if (uc.role.roleName === "teacher") {
+            if (uc.role === UserClassRole.TEACHER) {
                 teacherClassIds.add(uc.classId);
             }
-            if (uc.role.roleName === "teacher_assistant") {
+            if (uc.role === UserClassRole.TEACHER_ASSISTANT) {
                 taClassIds.add(uc.classId);
             }
-            if (uc.role.roleName === "student") {
+            if (uc.role === UserClassRole.STUDENT) {
                 allowedClassIds.add(uc.classId);
             }
         }
@@ -48,8 +44,7 @@ export const ClassService = {
 
             if (teacherIds.length > 0) {
                 // tìm toàn bộ lớp của các teacher này
-                const teacherClasses = await userClassRepository.findClassesByTeacherIds(teacherIds);
-                const classIds = teacherClasses.map(c => c.classId);
+                const classIds = await userClassRepository.findClassesByTeacherIds(teacherIds);
                 classIds.forEach(id => allowedClassIds.add(id));
             }
         }
@@ -57,34 +52,32 @@ export const ClassService = {
         return [...allowedClassIds];
     },
 
-    async canManageClass(currentUser: UserIdentity, classId: number): Promise<boolean> {
-
-        // ADMIN → full quyền
-        if (currentUser.roleName === "admin") {
-            return true;
-        }
-
-        // TEACHER → chỉ được quản lý class mình dạy
-        if (currentUser.roleName === "teacher") {
-            const uc = await userClassRepository.findByUserIdAndClassId(currentUser.userId, classId);
-
-            return !!uc && uc.role.roleName == "teacher";
-        }
-
-        return false;
-    },
-
     async getClasses(currentUser: UserIdentity): Promise<ClassPublicDTO[]> {
         return ClassRepository.findByIds(await this.getAllowedClassIds(currentUser));
     },
 
+    async create(currentUser: UserIdentity, payload: CreateClassDTO): Promise<ClassPublicDTO> {
+        if (!await AuthorizationService.canCreateClass(currentUser.userId)) {
+            throw new ForbiddenError("You do not have permission to create a class");
+        }
 
-    async update(classId: number, payload: UpdateClassDTO) {
+        return ClassRepository.create({
+            ...payload,
+            isDeleted: false,
+        } as any);
+    },
+
+    async update(currentUser: UserIdentity, classId: number, payload: UpdateClassDTO): Promise<ClassPublicDTO> {
+        if (!await AuthorizationService.canUpdateClass(currentUser.userId, classId)) {
+            throw new ForbiddenError("You do not have permission to update this class");
+        }
         return ClassRepository.update(classId, payload);
     },
 
-
-    async delete(classId: number) {
-        return ClassRepository.update(classId, { isDeleted: true });
+    async delete(currentUser: UserIdentity, classId: number): Promise<ClassPublicDTO> {
+        if (!await AuthorizationService.canDeleteClass(currentUser.userId)) {
+            throw new ForbiddenError("You do not have permission to delete this class");
+        }
+        return ClassRepository.update(classId, { deletedAt: new Date() });
     },
 };

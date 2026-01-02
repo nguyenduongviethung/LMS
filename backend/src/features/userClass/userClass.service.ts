@@ -1,20 +1,20 @@
 import { userClassRepository } from "./userClass.repository";
-import { UserIdentity } from "@shared/src/user/user.model";
-import { CreateUserClassDTO, UpdateUserClassDTO } from "@shared/src/userClass/userClass.model";
-import { ClassService } from "../class/class.service"
+import { UserIdentity } from "backend/src/features/user/user.model";
+import { CreateUserClassDTO, UpdateUserClassDTO } from "backend/src/features/userClass/userClass.model";
+import { AuthorizationService } from "../authorization/authorization.service";
 
 export const UserClassService = {
     async createUserClass(currentUser: UserIdentity, data: CreateUserClassDTO) {
-        if (!ClassService.canManageClass(currentUser, data.classId)) {
+        if (!await AuthorizationService.canManageUserClass(currentUser.userId, data.classId)) {
             throw new Error("Unauthorized");
         }
         return userClassRepository.create(data);
     },
 
-    async updateUserClass(currentUser: UserIdentity, userId: number, classId: number, data: UpdateUserClassDTO) {
-        if (!ClassService.canManageClass(currentUser, classId)) {
+    async updateUserClass(currentUser: UserIdentity, userClassId: number , data: UpdateUserClassDTO) {
+        if (!await AuthorizationService.canManageUserClass(currentUser.userId, userClassId)) {
             throw new Error("Unauthorized");
         }
-        return userClassRepository.update(userId, classId, data);
+        return userClassRepository.update(userClassId, data);
     }
 };

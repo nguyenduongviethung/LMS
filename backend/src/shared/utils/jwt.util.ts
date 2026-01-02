@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { UserIdentity } from "@shared/src/user/user.model";
+import { UserIdentity } from "backend/src/features/user/user.model";
 
 export const JwtUtil = {
     generateAccessToken(user: UserIdentity): string {

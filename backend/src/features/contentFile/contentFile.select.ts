@@ -6,10 +6,5 @@ export const contentFilePublicSelect = Prisma.validator<Prisma.ContentFileSelect
     file: {
         select: filePublicSelect,
     },
-    role: {
-        select: {
-            roleId: true,
-            roleType: true,
-        },
-    },
+    role: true,
 });

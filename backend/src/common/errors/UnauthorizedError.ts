@@ -1,7 +1,7 @@
 import { HttpError } from "./HttpError";
 
-export class ForbiddenError extends HttpError {
-    constructor(message = "Forbidden") {
-        super(message, 403);
+export class UnauthorizedError extends HttpError {
+    constructor(message = "Unauthorized") {
+        super(message, 401);
     }
 }

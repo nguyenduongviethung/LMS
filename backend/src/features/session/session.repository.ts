@@ -1,12 +1,23 @@
+import { findAncestor } from "typescript";
 import { prisma } from "../../shared/prisma/client";
 import { sessionPublicSelect } from "./session.select";
-import { SessionPublicDTO, CreateSessionDTO, UpdateSessionDTO } from "@shared/src/session/session.model";
+import { SessionPublicDTO, CreateSessionDTO, UpdateSessionDTO } from "backend/src/features/session/session.model";
 
 export const SessionRepository = {
+    async findBySessionId(sessionId: number): Promise<SessionPublicDTO> {
+        return prisma.session.findUniqueOrThrow({
+            where: {
+                sessionId,
+                deletedAt: null
+            },
+            select: sessionPublicSelect,
+        });
+    },
+
     async findByClassIds(classIds: number[]): Promise<SessionPublicDTO[]> {
         return prisma.session.findMany({
             where: {
-                isDeleted: false,
+                deletedAt: null,
                 classId: { in: classIds }
             },
             select: sessionPublicSelect,

@@ -1,5 +1,5 @@
 import { FileRepository } from "./file.repository";
-import { FilePublicDTO } from "@shared/src/file/file.model";
+import { FilePublicDTO } from "backend/src/features/file/file.model";
 
 export const FileService = {
     async uploadFile(file: Express.Multer.File): Promise<FilePublicDTO> {
