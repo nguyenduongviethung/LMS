@@ -1,7 +1,7 @@
 import { UserClassRole } from "@prisma/client";
 import { prisma } from "../../shared/prisma/client";
 import { userClassPublicSelect } from "./userClass.select";
-import { UserClassPublicDTO, CreateUserClassDTO, UpdateUserClassDTO } from "backend/src/features/userClass/userClass.model";
+import { UserClassPublicDTO, CreateUserClassDTO, UpdateUserClassDTO } from "./userClass.model";
 
 export const userClassRepository = {
     async findById(userClassId: number): Promise<UserClassPublicDTO | null> {

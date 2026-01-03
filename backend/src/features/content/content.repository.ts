@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../shared/prisma/client";
 import { contentPublicSelect } from "./content.select";
-import { CreateContentDTO, ContentPublicDTO, UpdateContentDTO } from "backend/src/features/content/content.model";
+import { CreateContentDTO, ContentPublicDTO, UpdateContentDTO } from "./content.model";
 
 export const ContentRepository = {
     async findBySessionId(sessionId: number): Promise<ContentPublicDTO[]> {

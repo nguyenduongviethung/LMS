@@ -1,8 +1,8 @@
 import { userProgramRepository } from "./userProgram.repository";
-import { UserIdentity } from "backend/src/features/user/user.model";
-import { CreateUserProgramDTO, UpdateUserProgramDTO } from "backend/src/features/userProgram/userProgram.model";
+import { UserIdentity } from "../user/user.model";
+import { CreateUserProgramDTO, UpdateUserProgramDTO } from "./userProgram.model";
 import { AuthorizationService } from "../authorization/authorization.service";
-import { ForbiddenError } from "backend/src/common/errors/ForbiddenError";
+import { ForbiddenError } from "../../common/errors/ForbiddenError";
 
 export const UserProgramService = {
     async getByUserId(userId: number) {

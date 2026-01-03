@@ -1,4 +1,4 @@
-import { UserIdentity } from "backend/src/features/user/user.model";
+import { UserIdentity } from "../../features/user/user.model";
 
 declare global {
   namespace Express {

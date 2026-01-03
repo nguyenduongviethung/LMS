@@ -13,5 +13,5 @@
 
     "verbatimModuleSyntax": false
   },
-  "include": ["src", "../shared/src"],
+  "include": ["src", "../shared/src", "prisma/seed.ts", "../frontend/src/lib"],
 }

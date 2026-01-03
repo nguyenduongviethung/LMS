@@ -1,10 +1,10 @@
 import { SessionRepository } from "./session.repository";
-import { UserIdentity } from "backend/src/features/user/user.model";
+import { UserIdentity } from "../user/user.model";
 import { ClassService } from "../class/class.service";
 import { SessionContentService } from "../sessionContent/sessionContent.service";
-import { CreateSessionDTO, SessionPublicDTO, UpdateSessionDTO } from "backend/src/features/session/session.model";
+import { CreateSessionDTO, SessionPublicDTO, UpdateSessionDTO } from "./session.model";
 import { AuthorizationService } from "../authorization/authorization.service";
-import { ForbiddenError } from "backend/src/common/errors/ForbiddenError";
+import { ForbiddenError } from "../../common/errors/ForbiddenError";
 
 export const SessionService = {
     async getSessions(currentUser: UserIdentity) {

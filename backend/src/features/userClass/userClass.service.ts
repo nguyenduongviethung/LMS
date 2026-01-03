@@ -1,8 +1,8 @@
 import { userClassRepository } from "./userClass.repository";
-import { UserIdentity } from "backend/src/features/user/user.model";
-import { CreateUserClassDTO, UpdateUserClassDTO } from "backend/src/features/userClass/userClass.model";
+import { UserIdentity } from "../user/user.model";
+import { CreateUserClassDTO, UpdateUserClassDTO } from "./userClass.model";
 import { AuthorizationService } from "../authorization/authorization.service";
-import { ForbiddenError } from "backend/src/common/errors/ForbiddenError";
+import { ForbiddenError } from "../../common/errors/ForbiddenError";
 
 export const UserClassService = {
     async getById(userClassId: number) {

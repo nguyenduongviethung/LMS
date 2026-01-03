@@ -1,6 +1,6 @@
-import { prisma } from "backend/src/shared/prisma/client";
+import { prisma } from "../../shared/prisma/client";
 import { sessionContentPublicSelect } from "./sessionContent.select";
-import { CreateSessionContentDTO, SessionContentPublicDTO } from "backend/src/features/sessionContent/sessionContent.model";
+import { CreateSessionContentDTO, SessionContentPublicDTO } from "./sessionContent.model";
 
 export const SessionContentRepository = {
     async create(data: CreateSessionContentDTO): Promise<SessionContentPublicDTO> {

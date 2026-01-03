@@ -1,8 +1,8 @@
 import { ClassRepository } from "./class.repository";
-import { ClassPublicDTO, CreateClassDTO, UpdateClassDTO } from "backend/src/features/class/class.model";
-import { UserIdentity } from "backend/src/features/user/user.model";
+import { ClassPublicDTO, CreateClassDTO, UpdateClassDTO } from "./class.model";
+import { UserIdentity } from "../user/user.model";
 import { userClassRepository } from "../userClass/userClass.repository";
-import { ForbiddenError } from "backend/src/common/errors/ForbiddenError";
+import { ForbiddenError } from "../../common/errors/ForbiddenError";
 import { UserClassRole, UserRole } from "@prisma/client";
 import { AuthorizationService } from "../authorization/authorization.service";
 

@@ -1,9 +1,9 @@
 import { UserRepository } from "./user.repository";
-import { UserIdentity, UserPublicDTO, CreateUserDTO, UpdateUserDTO } from "backend/src/features/user/user.model";
+import { UserIdentity, UserPublicDTO, CreateUserDTO, UpdateUserDTO } from "./user.model";
 import { AuthorizationService } from "../authorization/authorization.service";
 import bcrypt from "bcrypt";
 import { UserRole, UserClassRole } from "@prisma/client";
-import { ForbiddenError } from "backend/src/common/errors/ForbiddenError";
+import { ForbiddenError } from "../../common/errors/ForbiddenError";
 
 export const UserService = {
     async isAdmin(currentUser: UserIdentity): Promise<boolean> {

@@ -1,8 +1,8 @@
 import { ContentRepository } from "./content.repository";
 import { ContentFileService } from "../contentFile/contentFile.service";
-import { CreateContentDTO, UpdateContentDTO, ContentPublicDTO } from "backend/src/features/content/content.model";
+import { CreateContentDTO, UpdateContentDTO, ContentPublicDTO } from "./content.model";
 import { AuthorizationService } from "../authorization/authorization.service";
-import { ForbiddenError } from "backend/src/common/errors/ForbiddenError";
+import { ForbiddenError } from "../../common/errors/ForbiddenError";
 import { UserIdentity } from "../user/user.model";
 
 export const ContentService = {

@@ -1,5 +1,5 @@
 import { SessionContentRepository } from "./sessionContent.repository";
-import { SessionContentPublicDTO, CreateSessionContentDTO } from "backend/src/features/sessionContent/sessionContent.model";
+import { SessionContentPublicDTO, CreateSessionContentDTO } from "./sessionContent.model";
 
 export const SessionContentService = {
     async create(data: CreateSessionContentDTO): Promise<SessionContentPublicDTO> {

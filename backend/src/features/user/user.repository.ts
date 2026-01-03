@@ -1,6 +1,6 @@
 import { prisma } from '../../shared/prisma/client';
 import { userPublicSelect } from './user.select';
-import { UserIdentity, UserPublicDTO, CreateUserDTO, UpdateUserDTO } from 'backend/src/features/user/user.model';
+import { UserIdentity, UserPublicDTO, CreateUserDTO, UpdateUserDTO } from './user.model';
 
 export const UserRepository = {
     async findByEmail(email: string): Promise<UserIdentity & { password: string }> {

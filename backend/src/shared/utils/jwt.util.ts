@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { UserIdentity } from "backend/src/features/user/user.model";
+import { UserIdentity } from "../../features/user/user.model";
 
 export const JwtUtil = {
     generateAccessToken(user: UserIdentity): string {
@@ -10,7 +10,7 @@ export const JwtUtil = {
         return jwt.sign(
             {
                 sub: String(user.userId),
-                roleName: user.roleName,
+                roleName: user.role,
             },
             secret,
             { expiresIn: "15m" }
@@ -36,7 +36,7 @@ export const JwtUtil = {
 
         return {
             userId: Number(decoded.sub),
-            roleName: decoded.roleName as string,
+            role: decoded.roleName as string,
         };
     },
 
@@ -48,7 +48,7 @@ export const JwtUtil = {
 
         return {
             userId: Number(decoded.sub),
-            roleName: decoded.roleName as string,
+            role: decoded.roleName as string,
         };
     },
 };

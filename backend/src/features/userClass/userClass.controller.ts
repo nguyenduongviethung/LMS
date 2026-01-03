@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { UserClassService } from './userClass.service';
-import { CreateUserClassDTO, UpdateUserClassDTO } from 'backend/src/features/userClass/userClass.model';
+import { CreateUserClassDTO, UpdateUserClassDTO } from './userClass.model';
 
 export const userClassController = {
     createUserClass: async (req: Request<{}, {}, CreateUserClassDTO>, res: Response) => {

@@ -1,6 +1,6 @@
 import { prisma } from '../../shared/prisma/client';
 import { classPublicSelect } from './class.select';
-import { ClassPublicDTO, CreateClassDTO, UpdateClassDTO } from 'backend/src/features/class/class.model';
+import { ClassPublicDTO, CreateClassDTO, UpdateClassDTO } from '../class/class.model';
 
 export const ClassRepository = {
     async findAllIds(): Promise<number[]> {

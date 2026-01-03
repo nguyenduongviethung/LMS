@@ -3,7 +3,7 @@ import { UserIdentity } from "../user/user.model";
 import { AuthorizationService } from "../authorization/authorization.service";
 import { CreateProgramDTO, UpdateProgramDTO, ProgramPublicDTO } from "./program.model";
 import { UserProgramService } from "../userProgram/userProgram.service";
-import { ForbiddenError } from "backend/src/common/errors/ForbiddenError";
+import { ForbiddenError } from "../../common/errors/ForbiddenError";
 
 export const ProgramService = {
     async getByContentId(contentId: number): Promise<ProgramPublicDTO[]> {

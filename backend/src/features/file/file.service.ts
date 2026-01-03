@@ -1,8 +1,8 @@
 import { FileRepository } from "./file.repository";
-import { FilePublicDTO } from "backend/src/features/file/file.model";
+import { FilePublicDTO } from "./file.model";
 import { AuthorizationService } from "../authorization/authorization.service";
 import { UserIdentity } from "../user/user.model";
-import { ForbiddenError } from "backend/src/common/errors/ForbiddenError";
+import { ForbiddenError } from "../../common/errors/ForbiddenError";
 
 export const FileService = {
     async uploadFile(currentUser: UserIdentity, file: Express.Multer.File): Promise<FilePublicDTO> {

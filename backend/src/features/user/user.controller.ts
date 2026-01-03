@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { UserService } from "./user.service";
-import { UserIdentity, CreateUserDTO, UpdateUserDTO } from "backend/src/features/user/user.model";
+import { UserIdentity, CreateUserDTO, UpdateUserDTO } from "./user.model";
 
 export const userController = {
     async getUsers(req: Request<{}, {}, UserIdentity>, res: Response) {

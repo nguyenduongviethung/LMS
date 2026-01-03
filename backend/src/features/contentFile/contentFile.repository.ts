@@ -1,6 +1,6 @@
 import { prisma } from "../../shared/prisma/client";
 import { contentFilePublicSelect } from "./contentFile.select";
-import { ContentFilePublicDTO, CreateContentFileDTO, UpdateContentFileDTO } from "backend/src/features/contentFile/contentFile.model";
+import { ContentFilePublicDTO, CreateContentFileDTO, UpdateContentFileDTO } from "./contentFile.model";
 
 export const contentFileRepository = {
     async create(data: CreateContentFileDTO): Promise<ContentFilePublicDTO> {

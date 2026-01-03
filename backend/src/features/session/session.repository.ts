@@ -1,7 +1,7 @@
 import { findAncestor } from "typescript";
 import { prisma } from "../../shared/prisma/client";
 import { sessionPublicSelect } from "./session.select";
-import { SessionPublicDTO, CreateSessionDTO, UpdateSessionDTO } from "backend/src/features/session/session.model";
+import { SessionPublicDTO, CreateSessionDTO, UpdateSessionDTO } from "./session.model";
 
 export const SessionRepository = {
     async findBySessionId(sessionId: number): Promise<SessionPublicDTO> {

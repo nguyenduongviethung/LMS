@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { AuthenticationService } from './authentication.service';
-import { CreateUserDTO } from 'backend/src/features/user/user.model';
+import { CreateUserDTO } from '../user/user.model';
+import { JwtUtil } from '../../shared/utils/jwt.util';
 
 export interface LoginRequest {
     email: string;
@@ -34,7 +35,13 @@ export const AuthenticationController = {
             path: "/auth/refresh"
         });
 
-        return res.json({ accessToken });
+        const user = JwtUtil.verifyAccessToken(accessToken);
+
+        return res.json({ accessToken, user });
+    },
+
+    async me(req: Request, res: Response, next: NextFunction) {
+        return res.json({ user: req.user });
     },
 
     async register(req: Request<{}, {}, CreateUserDTO>, res: Response, next: NextFunction) {

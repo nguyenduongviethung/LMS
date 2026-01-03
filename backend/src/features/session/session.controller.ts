@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { SessionService } from "./session.service";
-import { UserIdentity } from "backend/src/features/user/user.model";
+import { UserIdentity } from "../user/user.model";
 import { ContentService } from "../content/content.service";
-import { CreateSessionDTO, UpdateSessionDTO } from "backend/src/features/session/session.model";
+import { CreateSessionDTO, UpdateSessionDTO } from "./session.model";
 
 
 export const sessionController = {
