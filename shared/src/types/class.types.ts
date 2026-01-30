@@ -1,4 +1,6 @@
 import { ClassStatus } from "../enums/class.enum";
+import { z } from "zod";
+import { CreateClassSchema, UpdateClassSchema } from "../schema/class.schema";
 
 export interface ClassPublicDTO {
     classId: number;
@@ -15,3 +17,7 @@ export interface ClassPublicDTO {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface CreateClassDTO extends z.infer<typeof CreateClassSchema>{}
+
+export interface UpdateClassDTO extends z.infer<typeof UpdateClassSchema>{}

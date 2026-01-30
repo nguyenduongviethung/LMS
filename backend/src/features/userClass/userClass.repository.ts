@@ -4,10 +4,11 @@ import { UserClassPublicDTO } from "@shared/src/types/userClass.types";
 import { UserClassRole } from "@shared/src/enums/userClass.enum";
 
 export const UserClassRepository = {
-    async findByUserIds(active: boolean, userIds: number[], userClassRoles?: UserClassRole[]): Promise<UserClassPublicDTO[]> {
+    async findByUserIdsAndClassIds(active: boolean, userIds?: number[], classIds?: number[], userClassRoles?: UserClassRole[]): Promise<UserClassPublicDTO[]> {
         return prisma.userClass.findMany({
             where: {
                 ...(userIds && { userId: { in: userIds } }),
+                ...(classIds && { classId: { in: classIds } }),
                 ...(active ? { deletedAt: null } : {}),
                 ...(userClassRoles && { role: { in: userClassRoles} }),
                 user: {
