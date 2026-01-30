@@ -5,6 +5,7 @@ import { UserClassRole } from "@shared/src/enums/userClass.enum";
 import { UserClassService } from "../userClass/userClass.service";
 // import { AttendanceService } from "../attendance/attendance.service";
 import { BadRequestError } from "../../common/errors/BadRequestError";
+import { SessionService } from "../session/session.service";
 
 export const classController = {
     async getClasses(req: Request, res: Response) {
@@ -40,10 +41,10 @@ export const classController = {
         return res.json(userClasses);
     },
 
-    // async getSessions(req: Request<{ classId: string }>, res: Response) {
-    //     const sessions = await SessionService.getByClassIds(req.user!, [Number(req.params.classId)]);
-    //     res.json(sessions);
-    // },
+    async getSessions(req: Request<{ classId: string }>, res: Response) {
+        const sessions = await SessionService.getByClassId(req.user!, Number(req.params.classId));
+        res.json(sessions);
+    },
 
 
     async createClass(req: Request, res: Response) {

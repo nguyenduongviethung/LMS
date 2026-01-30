@@ -21,4 +21,11 @@ export const ClassPolicy = {
     async delete(currentUser: UserIdentity): Promise<boolean> {
         return await UserService.getUserRole(currentUser) === UserRole.ADMIN;
     },
+
+    async createSession(currentUser: UserIdentity, classId: number): Promise<boolean> {
+        if (await UserService.getUserRole(currentUser) === UserRole.ADMIN) {
+            return true;
+        }
+        return UserClassService.getUserClassRoles(currentUser.userId, classId).then(roles => roles.includes(UserClassRole.TEACHER));
+    }
 };

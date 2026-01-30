@@ -67,10 +67,6 @@ export const ClassService = {
         return [...allowedClassIds];
     },
 
-    async getBySessionId(sessionId: number): Promise<ClassPublicDTO[]> {
-        return ClassRepository.findBySessionId(sessionId);
-    },
-
     async getByContentId(contentId: number): Promise<ClassPublicDTO[]> {
         return ClassRepository.findByContentId(contentId);
     },
