@@ -1,0 +1,319 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+model User {
+    userId          Int           @id @default(autoincrement())
+    name            String
+    email           String        @unique
+    phone           String
+    password        String
+    birthDate       DateTime?
+    studyPlace      String
+    workPlace       String
+    status          UserStatus    @default(ACTIVE)
+    role            UserRole      @default(USER)
+    refreshToken    String?
+    otp             String?
+    createdAt       DateTime      @default(now())
+    updatedAt       DateTime      @updatedAt
+    deletedAt       DateTime?
+    userClasses     UserClass[]
+    studentReviews  Review[]      @relation("StudentReview")
+    reviewerReviews Review[]      @relation("ReviewerReview")
+    tuitions        Tuition[]
+    attendances     Attendance[]
+    taskResults     TaskResult[]
+    userPrograms    UserProgram[]
+}
+
+enum UserRole {
+    ADMIN
+    USER
+}
+
+enum UserStatus {
+    ACTIVE
+    INACTIVE
+    SUSPENDED
+}
+
+model Class {
+    classId        Int         @id @default(autoincrement())
+    status         ClassStatus @default(OPEN)
+    name           String
+    description    String
+    defaultTuition Float?
+    createdAt      DateTime    @default(now())
+    updatedAt      DateTime    @updatedAt
+    deletedAt      DateTime?
+    userClasses    UserClass[]
+    reviews        Review[]
+    tuitions       Tuition[]
+    schedules      Schedule[]
+    sessions       Session[]
+}
+
+enum ClassStatus {
+    OPEN
+    CLOSED
+    ARCHIVED
+}
+
+model UserClass {
+    userClassId Int           @id @default(autoincrement())
+    userId      Int
+    user        User          @relation(fields: [userId], references: [userId])
+    classId     Int
+    class       Class         @relation(fields: [classId], references: [classId])
+    role        UserClassRole @default(STUDENT)
+    enrolledAt  DateTime      @default(now())
+    createdAt   DateTime      @default(now())
+    updatedAt   DateTime      @updatedAt
+    deletedAt   DateTime?
+}
+
+enum UserClassRole {
+    STUDENT
+    TEACHER
+    TEACHER_ASSISTANT
+}
+
+model Review {
+    reviewId      Int    @default(autoincrement())
+    studentId     Int
+    student       User   @relation("StudentReview", fields: [studentId], references: [userId])
+    reviewerId    Int
+    reviewer      User   @relation("ReviewerReview", fields: [reviewerId], references: [userId])
+    classId       Int
+    class         Class  @relation(fields: [classId], references: [classId])
+    month         Int
+    year          Int
+    goodAttitude  String
+    badAttitude   String
+    goodSkills    String
+    badSkills     String
+    goodKnowledge String
+    badKnowledge  String
+
+    @@id([studentId, classId, reviewerId, month, year])
+}
+
+model Tuition {
+    tuitionId Int           @default(autoincrement())
+    userId    Int
+    user      User          @relation(fields: [userId], references: [userId])
+    classId   Int
+    class     Class         @relation(fields: [classId], references: [classId])
+    status    TuitionStatus @default(UNPAID)
+    month     Int
+    year      Int
+    amount    Float
+
+    @@id([userId, classId, month, year])
+}
+
+enum TuitionStatus {
+    PAID
+    UNPAID
+    PENDING
+}
+
+model Schedule {
+    scheduleId Int    @id @default(autoincrement())
+    classId    Int
+    class      Class  @relation(fields: [classId], references: [classId])
+    weekday    Int
+    startTime  String
+    duration   Int
+}
+
+model Session {
+    sessionId         Int              @id @default(autoincrement())
+    templateSessionId Int?
+    templateSession   TemplateSession? @relation(fields: [templateSessionId], references: [templateSessionId])
+    classId           Int
+    class             Class            @relation(fields: [classId], references: [classId])
+    name              String
+    description       String
+    startTime         DateTime?
+    duration          Int?
+    createdAt         DateTime         @default(now())
+    updatedAt         DateTime         @updatedAt
+    deletedAt         DateTime?
+    attendances       Attendance[]
+    sessionContents   SessionContent[]
+}
+
+model Attendance {
+    userId         Int
+    user           User             @relation(fields: [userId], references: [userId])
+    sessionId      Int
+    session        Session          @relation(fields: [sessionId], references: [sessionId])
+    status         AttendanceStatus @default(ABSENT)
+    note           String
+    statusStatusId Int?
+    deletedAt      DateTime?
+
+    @@id([userId, sessionId])
+}
+
+enum AttendanceStatus {
+    PRESENT
+    ABSENT
+    NOT_TAKEN
+}
+
+model TaskResult {
+    userId    Int
+    user      User             @relation(fields: [userId], references: [userId])
+    contentId Int
+    content   Content          @relation(fields: [contentId], references: [contentId])
+    status    TaskResultStatus @default(PENDING)
+    score     Float?
+    reviews   String
+    deletedAt DateTime?
+
+    @@id([userId, contentId])
+}
+
+enum TaskResultStatus {
+    COMPLETED
+    PENDING
+    OVERDUE
+    NOT_TAKEN
+}
+
+model Program {
+    programId        Int               @id @default(autoincrement())
+    name             String
+    description      String
+    status           ProgramStatus     @default(DRAFT)
+    createdAt        DateTime          @default(now())
+    updatedAt        DateTime          @updatedAt
+    deletedAt        DateTime?
+    templateSessions TemplateSession[]
+    userPrograms     UserProgram[]
+    statusStatusId   Int?
+}
+
+enum ProgramStatus {
+    DRAFT
+    ACTIVE
+    DEPRECATED
+    ARCHIVED
+}
+
+model UserProgram {
+    userProgramId Int             @id @default(autoincrement())
+    userId        Int
+    user          User            @relation(fields: [userId], references: [userId])
+    programId     Int
+    program       Program         @relation(fields: [programId], references: [programId])
+    role          UserProgramRole @default(VIEWER)
+    createdAt     DateTime        @default(now())
+    updatedAt     DateTime        @updatedAt
+    deletedAt     DateTime?
+}
+
+enum UserProgramRole {
+    OWNER
+    EDITOR
+    VIEWER
+}
+
+model TemplateSession {
+    templateSessionId       Int                      @id @default(autoincrement())
+    name                    String
+    description             String
+    programId               Int
+    program                 Program                  @relation(fields: [programId], references: [programId])
+    createdAt               DateTime                 @default(now())
+    updatedAt               DateTime                 @updatedAt
+    deletedAt               DateTime?
+    sessions                Session[]
+    templateSessionContents TemplateSessionContent[]
+}
+
+model SessionContent {
+    sessionId Int
+    session   Session @relation(fields: [sessionId], references: [sessionId])
+    contentId Int
+    content   Content @relation(fields: [contentId], references: [contentId])
+
+    @@id([sessionId, contentId])
+}
+
+model TemplateSessionContent {
+    templateSessionId Int
+    templateSession   TemplateSession @relation(fields: [templateSessionId], references: [templateSessionId])
+    contentId         Int
+    content           Content         @relation(fields: [contentId], references: [contentId])
+
+    @@id([templateSessionId, contentId])
+}
+
+model Content {
+    contentId               Int                      @id @default(autoincrement())
+    name                    String
+    description             String
+    deadline                DateTime?
+    cutoffScore             Float?
+    type                    ContentType              @default(LECTURE_MATERIAL)
+    createdAt               DateTime                 @default(now())
+    updatedAt               DateTime                 @updatedAt
+    deletedAt               DateTime?
+    sessionContents         SessionContent[]
+    templateSessionContents TemplateSessionContent[]
+    taskResults             TaskResult[]
+    contentFiles            ContentFile[]
+}
+
+enum ContentType {
+    LECTURE_MATERIAL
+    ASSIGNMENT
+    HOMEWORK
+    QUIZ
+}
+
+model File {
+    fileId       Int           @id @default(autoincrement())
+    filename     String
+    filetype     FileType
+    filepath     String
+    url          String
+    filesize     Int?
+    uploadedAt   DateTime      @default(now())
+    contentFiles ContentFile[]
+}
+
+enum FileType {
+    FILE
+    LINK
+}
+
+model ContentFile {
+    contentId Int
+    content   Content         @relation(fields: [contentId], references: [contentId])
+    fileId    Int
+    file      File            @relation(fields: [fileId], references: [fileId])
+    role      ContentFileRole @default(LESSON_FILE)
+
+    @@id([contentId, fileId])
+}
+
+enum ContentFileRole {
+    LESSON_FILE
+    CORRECTION_FILE
+    SUBMISSION_LINK
+}
