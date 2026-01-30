@@ -20,28 +20,28 @@ export const userController = {
         res.json(user);
     },
 
-    // async getClasses(req: Request<{ userId: string }>, res: Response) {
-    //     const userId = Number(req.params.userId);
+    async getClasses(req: Request<{ userId: string }>, res: Response) {
+        const userId = Number(req.params.userId);
 
-    //     let roles: UserClassRole[] | undefined;
+        let roles: UserClassRole[] | undefined;
 
-    //     if (req.query.roles) {
-    //         if (Array.isArray(req.query.roles)) {
-    //             roles = req.query.roles as UserClassRole[];
-    //         } else if (typeof req.query.roles === "string") {
-    //             roles = req.query.roles.split(",") as UserClassRole[];
-    //         }
-    //     }
+        if (req.query.roles) {
+            if (Array.isArray(req.query.roles)) {
+                roles = req.query.roles as UserClassRole[];
+            } else if (typeof req.query.roles === "string") {
+                roles = req.query.roles.split(",") as UserClassRole[];
+            }
+        }
         
-    //     const userClasses = await UserClassService.getByUserIds(
-    //         req.user!,
-    //         true,
-    //         [userId],
-    //         roles
-    //     );
+        const userClasses = await UserClassService.getByUserId(
+            req.user!,
+            true,
+            userId,
+            roles
+        );
 
-    //     return res.json(userClasses);
-    // },
+        return res.json(userClasses);
+    },
 
     async createUser(req: Request<{}, {}, CreateUserDTO>, res: Response) {
         const created = await UserService.createUser(req.user!, req.body);

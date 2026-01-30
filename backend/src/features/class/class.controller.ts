@@ -17,28 +17,28 @@ export const classController = {
         res.json(cls);
     },
 
-    // async getUsers(req: Request<{ classId: string }>, res: Response) {
-    //     const classId = parseInt(req.params.classId, 10);
+    async getUsers(req: Request<{ classId: string }>, res: Response) {
+        const classId = parseInt(req.params.classId, 10);
 
-    //     let roles: UserClassRole[] | undefined;
+        let roles: UserClassRole[] | undefined;
 
-    //     if (req.query.roles) {
-    //         if (Array.isArray(req.query.roles)) {
-    //             roles = req.query.roles as UserClassRole[];
-    //         } else if (typeof req.query.roles === "string") {
-    //             roles = req.query.roles.split(",") as UserClassRole[];
-    //         }
-    //     }
+        if (req.query.roles) {
+            if (Array.isArray(req.query.roles)) {
+                roles = req.query.roles as UserClassRole[];
+            } else if (typeof req.query.roles === "string") {
+                roles = req.query.roles.split(",") as UserClassRole[];
+            }
+        }
 
-    //     const userClasses = await UserClassService.getByClassIds(
-    //         req.user!,
-    //         true,
-    //         [classId],
-    //         roles
-    //     );
+        const userClasses = await UserClassService.getByClassId(
+            req.user!,
+            true,
+            classId,
+            roles
+        );
 
-    //     return res.json(userClasses);
-    // },
+        return res.json(userClasses);
+    },
 
     // async getSessions(req: Request<{ classId: string }>, res: Response) {
     //     const sessions = await SessionService.getByClassIds(req.user!, [Number(req.params.classId)]);
