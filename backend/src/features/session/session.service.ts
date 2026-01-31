@@ -32,6 +32,9 @@ export const SessionService = {
     },
 
     async getById(currentUser: UserIdentity, sessionId: number): Promise<WithPermission<SessionPublicDTO>> {
+        if (!await SessionPolicy.get(currentUser, sessionId)) {
+            throw new ForbiddenError("SESSION.FORBIDDEN_GET");
+        }
         const session = await SessionRepository.findById(sessionId);
         if (!session) {
             throw new NotFoundError("SESSION.NOT_FOUND");

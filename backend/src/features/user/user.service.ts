@@ -75,7 +75,7 @@ export const UserService = {
 
     async getDetailUser(currentUser: UserIdentity, userId: number): Promise<WithPermission<UserPublicDTO>> {
         if (!(await UserPolicy.getDetail(currentUser, userId))) {
-            throw new ForbiddenError("USER.FORBIDDEN_DETAIL");
+            throw new ForbiddenError("USER.FORBIDDEN_GET_DETAIL");
         }
         const user = await UserRepository.findById(userId);
         if (!user) {

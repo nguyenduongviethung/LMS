@@ -77,6 +77,9 @@ export const ClassService = {
     },
 
     async getById(currentUser: UserIdentity, classId: number): Promise<WithPermission<ClassPublicDTO>> {
+        if (!await ClassPolicy.get(currentUser, classId)) {
+            throw new ForbiddenError("CLASS.FORBIDDEN_GET");
+        }
         const cls = await ClassRepository.findById(classId);
         if (!cls) {
             throw new NotFoundError("CLASS.NOT_FOUND");

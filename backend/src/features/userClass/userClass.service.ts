@@ -32,7 +32,7 @@ export const UserClassService = {
 
     async getByUserId(currentUser: UserIdentity, active: boolean, userId: number, userClassRoles?: UserClassRole[]): Promise<WithPermission<UserClassPublicDTO>[]> {
         if (!await UserPolicy.getDetail(currentUser, userId)) {
-            throw new ForbiddenError("Forbidden: You do not have permission to get user detail");
+            throw new ForbiddenError("USER.FORBIDDEN_GET_DETAIL");
         }
         const result = await UserClassRepository.findByUserIdsAndClassIds(active, [userId], undefined, userClassRoles);
         return Promise.all(result.map(async userClass => addPermissions(currentUser, userClass)));
@@ -40,13 +40,24 @@ export const UserClassService = {
 
     async getByClassId(currentUser: UserIdentity, active: boolean, classId: number, userClassRoles?: UserClassRole[]): Promise<WithPermission<UserClassPublicDTO>[]> {
         if (!await ClassService.getAllowedClassIds(currentUser).then(ids => ids.includes(classId))) {
-            throw new ForbiddenError("Forbidden: You do not have permission to get class detail");
+            throw new ForbiddenError("CLASS.FORBIDDEN_GET");
         }
         const result = await UserClassRepository.findByUserIdsAndClassIds(active, undefined, [classId], userClassRoles);
         return Promise.all(result.map(async userClass => addPermissions(currentUser, userClass)));
     },
 
+    async getByIdRaw(userClassId: number) {
+        const result = await UserClassRepository.findById(userClassId);
+        if (!result) {
+            throw new NotFoundError("USER_CLASS.NOT_FOUND");
+        }
+        return result;
+    },
+
     async getById(currentUser: UserIdentity, userClassId: number): Promise<WithPermission<UserClassPublicDTO>> {
+        if (!await UserClassPolicy.get(currentUser, userClassId)) {
+            throw new ForbiddenError("USER_CLASS.FORBIDDEN_GET");
+        }
         const result = await UserClassRepository.findById(userClassId);
         if (!result) {
             throw new NotFoundError("USER_CLASS.NOT_FOUND");
@@ -56,21 +67,21 @@ export const UserClassService = {
 
     async createUserClass(currentUser: UserIdentity, data: CreateUserClassDTO) {
         if (!await UserClassPolicy.create(currentUser, data.classId)) {
-            throw new ForbiddenError("Forbidden: You do not have permission to add users to this class.");
+            throw new ForbiddenError("USER_CLASS.FORBIDDEN_CREATE");
         }
         return UserClassRepository.create(data);
     },
 
     async updateUserClass(currentUser: UserIdentity, userClassId: number, data: UpdateUserClassDTO) {
         if (!await UserClassPolicy.manage(currentUser, userClassId)) {
-            throw new ForbiddenError("Forbidden: You do not have permission to update this user-class association.");
+            throw new ForbiddenError("USER_CLASS.FORBIDDEN_UPDATE");
         }
         return UserClassRepository.update(userClassId, data);
     },
 
     async deleteUserClass(currentUser: UserIdentity, userClassId: number): Promise<UserClassPublicDTO> {
         if (!await UserClassPolicy.manage(currentUser, userClassId)) {
-            throw new ForbiddenError("Forbidden: You do not have permission to update this user-class association.");
+            throw new ForbiddenError("USER_CLASS.FORBIDDEN_DELETE");
         }
         return UserClassRepository.delete(userClassId);
     }
