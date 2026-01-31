@@ -1,5 +1,4 @@
 import { prisma } from "../../database/client";
-import { Prisma } from "@prisma/client";
 import { sessionPublicSelect } from "./session.select";
 import { SessionPublicDTO, CreateSessionDTO, UpdateSessionDTO } from "@shared/src/types/session.types";
 

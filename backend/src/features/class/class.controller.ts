@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
 import { ClassService } from "./class.service";
-// import { SessionService } from "../session/session.service";
 import { UserClassRole } from "@shared/src/enums/userClass.enum";
 import { UserClassService } from "../userClass/userClass.service";
-// import { AttendanceService } from "../attendance/attendance.service";
-import { BadRequestError } from "../../common/errors/BadRequestError";
 import { SessionService } from "../session/session.service";
 
 export const classController = {

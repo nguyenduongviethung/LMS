@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { UserService } from "./user.service";
-import { UserIdentity, CreateUserDTO, UpdateUserDTO } from "@shared/src/types/user.types";
+import { CreateUserDTO, UpdateUserDTO } from "@shared/src/types/user.types";
 import { UserClassRole } from "@shared/src/enums/userClass.enum";
 import { UserClassService } from "../userClass/userClass.service";
 

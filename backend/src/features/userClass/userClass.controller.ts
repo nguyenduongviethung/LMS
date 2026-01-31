@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { UserClassService } from './userClass.service';
-// import { AttendanceService } from '../attendance/attendance.service';
 import { CreateUserClassDTO, UpdateUserClassDTO } from '@shared/src/types/userClass.types';
 import { AttendanceService } from '../attendance/attendance.service';
 

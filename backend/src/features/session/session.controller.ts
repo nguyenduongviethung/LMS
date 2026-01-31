@@ -7,6 +7,7 @@ import { CreateSessionDTO, UpdateSessionDTO } from "@shared/src/types/session.ty
 import { UserIdentity } from "@shared/src/types/user.types";
 import { ContentService } from "../content/content.service";
 import { AttendanceService } from "../attendance/attendance.service";
+import { TaskResultService } from "../taskResult/taskResult.service";
 
 
 export const sessionController = {
@@ -51,13 +52,13 @@ export const sessionController = {
         return res.json(result);
     },
 
-    // async ensureTaskResult(req: Request<{ sessionId: string, contentId: string }>, res: Response) {
-    //     const taskResults = await TaskResultService.ensureTaskResult(req.user!, Number(req.params.sessionId), Number(req.params.contentId));
-    //     res.json(taskResults);
-    // },
+    async ensureTaskResult(req: Request<{ sessionId: string, contentId: string }>, res: Response) {
+        const taskResults = await TaskResultService.ensureTaskResult(req.user!, Number(req.params.sessionId), Number(req.params.contentId));
+        res.json(taskResults);
+    },
 
-    // async getTaskResult(req: Request, res: Response) {
-    //     const taskResults = await TaskResultService.getSessionContentTaskResult(req.user!, Number(req.params.sessionId), Number(req.params.contentId));
-    //     res.json(taskResults);
-    // }
+    async getTaskResult(req: Request, res: Response) {
+        const taskResults = await TaskResultService.getSessionContentTaskResult(req.user!, Number(req.params.sessionId), Number(req.params.contentId));
+        res.json(taskResults);
+    }
 };

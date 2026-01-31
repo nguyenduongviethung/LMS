@@ -61,11 +61,4 @@ export const ContentService = {
         }
         return ContentRepository.updateContent(contentId, data);
     },
-
-    // async deleteUnattachedContents(cutoffDate: Date): Promise<number> {
-    //     const UnattachedContents = await ContentRepository.findUnattachedContents(cutoffDate);
-    //     const UnattachedContentIds = UnattachedContents.map(c => c.contentId);
-    //     await ContentFileService.deleteByContentIds(UnattachedContentIds);
-    //     return ContentRepository.deleteByIds(UnattachedContentIds);
-    // }
 };

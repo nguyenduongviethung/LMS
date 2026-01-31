@@ -1,4 +1,3 @@
-import { ClassService } from "@/features/class/class.service";
 import { UserService } from "@/features/user/user.service";
 import { UserClassService } from "@/features/userClass/userClass.service";
 import { UserRole } from "@shared/src/enums/user.enum";

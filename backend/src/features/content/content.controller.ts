@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { ContentService } from "./content.service";
-// import { TaskResultService } from "../taskResult/taskResult.service";
+import { TaskResultService } from "../taskResult/taskResult.service";
 
 export const contentController = {
     async createContent(req: Request, res: Response) {
@@ -14,8 +14,8 @@ export const contentController = {
         return res.json(result);
     },
 
-    // async updateTaskResult(req: Request<{ contentId: string, userId: string }>, res: Response) {
-    //     const result = await TaskResultService.updateTaskResult(req.user!, parseInt(req.params.contentId), parseInt(req.params.userId), req.body);
-    //     return res.json(result);
-    // }
+    async updateTaskResult(req: Request<{ contentId: string, userId: string }>, res: Response) {
+        const result = await TaskResultService.updateTaskResult(req.user!, parseInt(req.params.contentId), parseInt(req.params.userId), req.body);
+        return res.json(result);
+    }
 };
