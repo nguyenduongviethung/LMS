@@ -5,6 +5,8 @@ import { SessionService } from "./session.service";
 // import { TaskResultService } from "../taskResult/taskResult.service";
 import { CreateSessionDTO, UpdateSessionDTO } from "@shared/src/types/session.types";
 import { UserIdentity } from "@shared/src/types/user.types";
+import { ContentService } from "../content/content.service";
+import { AttendanceService } from "../attendance/attendance.service";
 
 
 export const sessionController = {
@@ -28,26 +30,26 @@ export const sessionController = {
         return res.status(204).send();
     },
 
-    // async getContents(req: Request<{ sessionId: string }>, res: Response) {
-    //     const sessionId = parseInt(req.params.sessionId);
-    //     const contents = await ContentService.getBySessionId(req.user!, sessionId);
-    //     res.json(contents);
-    // },
+    async getContents(req: Request<{ sessionId: string }>, res: Response) {
+        const sessionId = parseInt(req.params.sessionId);
+        const contents = await ContentService.getBySessionId(req.user!, sessionId);
+        res.json(contents);
+    },
 
-    // async ensureAttendance(req: Request<{ sessionId: string }>, res: Response) {
-    //     const attendance = await AttendanceService.ensureAttendance(req.user!, parseInt(req.params.sessionId));
-    //     res.json(attendance);
-    // },
+    async ensureAttendance(req: Request<{ sessionId: string }>, res: Response) {
+        const attendance = await AttendanceService.ensureAttendance(req.user!, parseInt(req.params.sessionId));
+        res.json(attendance);
+    },
 
-    // async getAttendance(req: Request, res: Response) {
-    //     const attendances = await AttendanceService.getSessionAttendance(req.user!, Number(req.params.sessionId));
-    //     res.json(attendances);
-    // },
+    async getAttendance(req: Request, res: Response) {
+        const attendances = await AttendanceService.getSessionAttendance(req.user!, Number(req.params.sessionId));
+        res.json(attendances);
+    },
 
-    // async updateAttendance(req: Request<{ sessionId: string, userId: string }>, res: Response) {
-    //     const result = await AttendanceService.updateAttendance(req.user!, parseInt(req.params.sessionId), parseInt(req.params.userId), req.body);
-    //     return res.json(result);
-    // },
+    async updateAttendance(req: Request<{ sessionId: string, userId: string }>, res: Response) {
+        const result = await AttendanceService.updateAttendance(req.user!, parseInt(req.params.sessionId), parseInt(req.params.userId), req.body);
+        return res.json(result);
+    },
 
     // async ensureTaskResult(req: Request<{ sessionId: string, contentId: string }>, res: Response) {
     //     const taskResults = await TaskResultService.ensureTaskResult(req.user!, Number(req.params.sessionId), Number(req.params.contentId));

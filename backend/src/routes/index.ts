@@ -6,7 +6,7 @@ import userClassRoute from "../features/userClass/userClass.route";
 import sessionRoute from "../features/session/session.route";
 import contentRoute from "../features/content/content.route";
 import sessionContentRoute from "../features/sessionContent/sessionContent.route";
-// import fileRoute from "../features/file/file.route";
+import fileRoute from "../features/file/file.route";
 
 const router = Router();
 
@@ -17,6 +17,6 @@ router.use("/sessions", sessionRoute);
 router.use("/contents", contentRoute)
 router.use("/session-contents", sessionContentRoute);
 router.use("/user-classes", userClassRoute);
-// router.use("/files", fileRoute);
+router.use("/files", fileRoute);
 
 export default router;

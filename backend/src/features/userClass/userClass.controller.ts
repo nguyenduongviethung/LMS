@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { UserClassService } from './userClass.service';
 // import { AttendanceService } from '../attendance/attendance.service';
 import { CreateUserClassDTO, UpdateUserClassDTO } from '@shared/src/types/userClass.types';
+import { AttendanceService } from '../attendance/attendance.service';
 
 export const userClassController = {
     async getUserClass (req: Request<{ userClassId: string}>, res: Response) {
@@ -9,10 +10,10 @@ export const userClassController = {
         res.json(userClass);
     },
 
-    // async getAttendance(req: Request, res: Response) {
-    //     const attendance = await AttendanceService.getUserClassAttendance(req.user!, Number(req.params.userClassId));
-    //     res.json(attendance);
-    // },
+    async getAttendance(req: Request, res: Response) {
+        const attendance = await AttendanceService.getUserClassAttendance(req.user!, Number(req.params.userClassId));
+        res.json(attendance);
+    },
 
     async createUserClass (req: Request<{}, {}, CreateUserClassDTO>, res: Response) {
         const created = await UserClassService.createUserClass(req.user!, req.body);

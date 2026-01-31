@@ -7,7 +7,7 @@ const router = Router();
 router.use(authenticate);
 
 router.get('/:userClassId', userClassController.getUserClass);
-// router.get('/:userClassId/attendance', userClassController.getAttendance);
+router.get('/:userClassId/attendance', userClassController.getAttendance);
 router.post('/', userClassController.createUserClass);
 router.put('/:userClassId', userClassController.updateUserClass);
 router.delete('/:userClassId', userClassController.deleteUserClass);

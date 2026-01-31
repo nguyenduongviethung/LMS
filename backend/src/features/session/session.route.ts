@@ -10,11 +10,11 @@ router.get('/', sessionController.getSessions);
 router.get('/:sessionId', sessionController.getSessions);
 router.post('/', sessionController.createSession);
 router.put('/:sessionId', sessionController.updateSession);
-// router.delete('/:sessionId', sessionController.deleteSession);
-// router.get('/:sessionId/attendance', sessionController.getAttendance);
-// router.post("/:sessionId/attendance/ensure", sessionController.ensureAttendance);
-// router.put("/:sessionId/users/:userId/attendance", sessionController.updateAttendance);
-// router.get('/:sessionId/contents', sessionController.getContents);
+router.delete('/:sessionId', sessionController.deleteSession);
+router.get('/:sessionId/attendance', sessionController.getAttendance);
+router.post("/:sessionId/attendance/ensure", sessionController.ensureAttendance);
+router.put("/:sessionId/users/:userId/attendance", sessionController.updateAttendance);
+router.get('/:sessionId/contents', sessionController.getContents);
 // router.get('/:sessionId/contents/:contentId/task-result', sessionController.getTaskResult);
 // router.post('/:sessionId/contents/:contentId/task-result/ensure', sessionController.ensureTaskResult);
 

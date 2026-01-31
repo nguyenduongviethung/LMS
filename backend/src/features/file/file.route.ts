@@ -8,7 +8,7 @@ const router = Router();
 router.use(authenticate);
 
 router.post("/upload", upload.single("file"), fileController.uploadFile);
-// router.get("/:fileId/download", fileController.downloadFile);
+router.get("/:fileId/download", fileController.downloadFile);
 router.get("/:fileId/download", fileController.downloadFile);
 router.post("/link", fileController.createLink);
 

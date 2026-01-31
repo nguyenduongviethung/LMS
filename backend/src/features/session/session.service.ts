@@ -1,13 +1,9 @@
 import { SessionRepository } from "./session.repository";
-import { ClassService } from "../class/class.service";
 import { ForbiddenError } from "../../common/errors/ForbiddenError";
 import { NotFoundError } from "../../common/errors/NotFoundError";
 import { SessionPublicDTO, CreateSessionDTO, UpdateSessionDTO } from "@shared/src/types/session.types";
 import { WithPermission } from "@shared/src/types/permission.types";
 import { UserIdentity } from "@shared/src/types/user.types";
-import { ClassRepository } from "../class/class.repository";
-import { UserClassService } from "../userClass/userClass.service";
-import { UserClassRole } from "@shared/src/enums/userClass.enum";
 import { SessionPolicy } from "@/policies/session.policy";
 import { ClassPolicy } from "@/policies/class.policy";
 
@@ -17,7 +13,7 @@ const addPermissions = async <T extends SessionPublicDTO>(currentUser: UserIdent
         permission: {
             canUpdate: await SessionPolicy.manage(currentUser, session.sessionId),
             canDelete: await SessionPolicy.manage(currentUser, session.sessionId),
-            // canManageAttendance: await AuthorizationService.canManageAttendance(currentUser, session.sessionId),
+            canManageAttendance: await SessionPolicy.manageAttendance(currentUser, session.sessionId),
         }
     };
 };
