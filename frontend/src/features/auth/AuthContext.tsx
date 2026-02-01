@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserIdentity } from '@shared/src/types/user.types';
 import { api } from '../../lib/axios';
-import { PermissionDTO } from '@shared/src/types/authorization.types';
+import { UserPermissionDTO } from '@shared/src/types/permission.types';
 
 interface AuthContextType {
   currentUser: UserIdentity | null;
-  permissions: PermissionDTO | null;
+  permissions: UserPermissionDTO | null;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -23,7 +23,7 @@ export const useAuth = () => {
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<UserIdentity | null>(null);
-  const [permissions, setPermissions] = useState<PermissionDTO | null>(null);
+  const [permissions, setPermissions] = useState<UserPermissionDTO | null>(null);
   const [loading, setLoading] = useState(true);
 
   const login = async (email: string, password: string) => {
