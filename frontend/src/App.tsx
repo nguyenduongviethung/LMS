@@ -23,7 +23,7 @@ import { LoginPage } from './features/auth/LoginPage';
 // import { ClassDetailPage } from './pages/ClassDetailPage';
 // import { ProgramDetailPage } from './pages/ProgramDetailPage';
 // import { Layout } from './components/Layout';
-// import { Toaster } from './components/ui/sonner';
+import { Toaster } from './ui/sonner';
 // import { UserClassProvider } from './contexts/UserClassContext';
 // import { AttendanceProvider } from './contexts/AttendanceContext';
 // import { SessionDetailPage } from './pages/SessionDetailPage';
@@ -161,10 +161,10 @@ const AppRoutes: React.FC = () => {
 const App: React.FC = () => {
   return (
     <BrowserRouter>
-      {/* <AuthProvider> */}
-        {/* <AppRoutes /> */}
-        {/* <Toaster position="top-right" /> */}
-      {/* </AuthProvider> */}
+      <AuthProvider>
+        <AppRoutes />
+        <Toaster position="top-right" />
+      </AuthProvider>
     </BrowserRouter>
   );
 };
