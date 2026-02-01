@@ -8,6 +8,7 @@ import { UserRole } from "@shared/src/enums/user.enum";
 import { UserClassRole } from "@shared/src/enums/userClass.enum";
 import { NotFoundError } from "../../common/errors/NotFoundError";
 import { ClassPolicy } from "@/policies/class.policy";
+import { UserClassPolicy } from "@/policies/userClass.policy";
 
 const addPermission = async (currentUser: UserIdentity, cls: ClassPublicDTO): Promise<WithPermission<ClassPublicDTO>> => {
     return {
@@ -15,6 +16,7 @@ const addPermission = async (currentUser: UserIdentity, cls: ClassPublicDTO): Pr
         permission: {
             canUpdate: await ClassPolicy.update(currentUser, cls.classId),
             canDelete: await ClassPolicy.delete(currentUser),
+            canCreateUserClass: await UserClassPolicy.create(currentUser, cls.classId)
         }
     }
 };
