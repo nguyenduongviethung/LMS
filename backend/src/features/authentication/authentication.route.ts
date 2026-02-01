@@ -9,6 +9,7 @@ router.post("/refresh-token", AuthenticationController.refreshToken);
 
 router.use(authenticate);
 router.get("/me", AuthenticationController.me);
+router.get("/me/permissions", AuthenticationController.getPermissions);
 router.post("/register", AuthenticationController.register);
 router.post("/logout", AuthenticationController.logout);
 

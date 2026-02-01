@@ -1,12 +1,15 @@
 import { FileRepository } from "./file.repository";
-import { ForbiddenError } from "../../common/errors/ForbiddenError";
 import { UserIdentity } from "@shared/src/types/user.types";
-import { FileDetailDTO, FilePublicDTO } from "@shared/src/types/file.types";
+import { FilePublicDTO } from "@shared/src/types/file.types";
 import { FileType } from "@shared/src/enums/file.enum";
-import { Multer } from 'multer';
+import { FilePolicy } from "@/policies/file.policy";
+import { ForbiddenError } from "@/common/errors/ForbiddenError";
 
 export const FileService = {
     async uploadFile(currentUser: UserIdentity, file: Express.Multer.File): Promise<FilePublicDTO> {
+        if (!await FilePolicy.create(currentUser)) {
+            throw new ForbiddenError("FILE.FORBIDDEN_CREATE");
+        }
         if (!file) {
             throw new Error("File is required");
         }
@@ -20,14 +23,10 @@ export const FileService = {
         });
     },
 
-    async getById(currentUser: UserIdentity, fileId: number): Promise<FileDetailDTO | null> {
-        return FileRepository.findById(fileId);
-    },
-
-    async createLink(
-        currentUser: UserIdentity,
-        data: { filename: string; url: string }
-    ): Promise<FilePublicDTO> {
+    async createLink(currentUser: UserIdentity, data: { filename: string; url: string }): Promise<FilePublicDTO> {
+        if (!await FilePolicy.create(currentUser)) {
+            throw new ForbiddenError("FILE.FORBIDDEN_CREATE");
+        }
         return FileRepository.create({
             filename: data.filename,
             filetype: 'LINK',
@@ -36,12 +35,4 @@ export const FileService = {
             filesize: null
         });
     },
-
-    async deleteFilesByIds(fileIds: number[]): Promise<number> {
-        return FileRepository.deleteByIds(fileIds);
-    },
-
-    async deleteUnattachedFiles(cutoffDate: Date): Promise<number> {
-        return FileRepository.deleteUntachedFiles(cutoffDate);
-    }
 };

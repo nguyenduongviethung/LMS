@@ -2,6 +2,11 @@ import { Request, Response } from 'express';
 import { AuthenticationService } from './authentication.service';
 import { CreateUserDTO } from '@shared/src/types/user.types';
 import { JwtUtil } from '../../common/utils/jwt.util';
+import { PermissionDTO, UserPermissionDTO } from '@shared/src/types/permission.types';
+import { UserPolicy } from '@/policies/user.policy';
+import { ClassPolicy } from '@/policies/class.policy';
+import { ContentPolicy } from '@/policies/content.policy';
+import { FilePolicy } from '@/policies/file.policy';
 
 export interface LoginRequest {
     email: string;
@@ -33,6 +38,25 @@ export const AuthenticationController = {
 
     async me(req: Request, res: Response) {
         return res.json(req.user);
+    },
+
+    async getPermissions(req: Request, res: Response) {
+        const result: UserPermissionDTO = {
+            user: {
+                create: await UserPolicy.create(req.user!)
+            },
+            class: {
+                create: await ClassPolicy.create(req.user!),
+                delete: await ClassPolicy.delete(req.user!),
+            },
+            content: {
+                create: await ContentPolicy.create(req.user!)
+            },
+            file: {
+                create: await FilePolicy.create(req.user!)
+            }
+        }
+        res.json(result);
     },
 
     async register(req: Request<{}, {}, CreateUserDTO>, res: Response) {

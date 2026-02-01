@@ -9,10 +9,6 @@ export interface FilePublicDTO {
     uploadedAt: Date;
 }
 
-export interface FileDetailDTO extends FilePublicDTO {
-    filepath: string;
-}
-
 export interface CreateFileDTO {
     filename: string;
     filetype: FileType;
