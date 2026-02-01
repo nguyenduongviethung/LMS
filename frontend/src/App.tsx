@@ -4,12 +4,12 @@ import { AuthProvider, useAuth } from './features/auth/AuthContext';
 import { Layout } from './features/layout/Layout';
 import { DashboardPage } from './features/dashboard/DashboardPage';
 import { LoginPage } from './features/auth/LoginPage';
-// import { UserProvider } from './contexts/UserContext';
+import { UserProvider } from './features/user/UserContext';
 // import { ClassProvider } from './contexts/ClassContext';
 // import { SessionProvider } from './contexts/SessionContext';
 // import { LoginPage } from './pages/LoginPage';
 // import { DashboardPage } from './pages/DashboardPage';
-// import { UsersPage } from './pages/UsersPage';
+import { UsersPage } from './features/user/UsersPage';
 // import { ClassesPage } from './pages/ClassesPage';
 // import { ProgramsPage } from './pages/ProgramsPage';
 // import { SessionsPage } from './pages/SessionsPage';
@@ -58,7 +58,7 @@ const AppRoutes: React.FC = () => {
         }
       >
         <Route index element={<DashboardPage />} />
-        {/* <Route
+        <Route
           path="users"
           element={
             <UserProvider>
@@ -66,7 +66,7 @@ const AppRoutes: React.FC = () => {
             </UserProvider>
           }
         />
-        <Route
+        {/* <Route
           path="users/:userId"
           element={
             <UserProvider>

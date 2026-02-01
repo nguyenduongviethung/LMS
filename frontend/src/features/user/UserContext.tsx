@@ -1,13 +1,13 @@
 import React, {
   createContext,
   useContext,
-  useEffect,
   useState,
   ReactNode,
 } from 'react';
-import { UserPublicDTO, CreateUserDTO, UpdateUserDTO } from '@shared/src/types/user.model';
-import { WithPermission } from '@shared/src/types/permission.model';
+import { UserPublicDTO, CreateUserDTO, UpdateUserDTO } from '@shared/src/types/user.types';
+import { WithPermission } from '@shared/src/types/permission.types';
 import { api } from '../../lib/axios';
+import { handleApiError } from '@/lib/handleApiError';
 
 /* ================================
    Context Type
@@ -63,13 +63,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 
   const [users, setUsers] = useState<WithPermission<UserPublicDTO>[]>([]);
   const [currentUser, setCurrentUser] = useState<WithPermission<UserPublicDTO> | null>(null);
-  /* ======================
-     Effects
-  ====================== */
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
 
   /* ======================
      Users API handlers
@@ -82,28 +75,45 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         data: convertUserDate(user.data),
         permission: user.permission,
       })));
-    } finally {
+    } catch (e) {
+      handleApiError(e);
     }
   };
 
   const fetchUser = async (userId: number) => {
-    const res = await api.get<WithPermission<UserPublicDTO> | null>(`/users/${userId}`);
-    setCurrentUser(res.data ? {
-      data: convertUserDate(res.data.data),
-      permission: res.data.permission,
-    } : null);
+    try {
+      const res = await api.get<WithPermission<UserPublicDTO>>(`/users/${userId}`);
+      setCurrentUser(res.data ? {
+        data: convertUserDate(res.data.data),
+        permission: res.data.permission,
+      } : null);
+    } catch (e) {
+      handleApiError(e);
+    }
   }
 
   const addUser = async (user: CreateUserDTO) => {
-    await api.post<UserPublicDTO>('/users', user);
+    try {
+      await api.post<UserPublicDTO>('/users', user);
+    } catch (e) {
+      handleApiError(e);
+    }
   };
 
   const updateUser = async (userId: number, userData: UpdateUserDTO) => {
-    await api.put<UserPublicDTO>(`/users/${userId}`, userData);
+    try {
+      await api.put<UserPublicDTO>(`/users/${userId}`, userData);
+    } catch (e) {
+      handleApiError(e);
+    }
   };
 
   const deleteUser = async (userId: number) => {
-    await api.delete(`/users/${userId}`);
+    try {
+      await api.delete(`/users/${userId}`);
+    } catch (e) {
+      handleApiError(e);
+    }
   };
 
   /* ======================
