@@ -8,6 +8,7 @@ import { UserPolicy } from "@/policies/user.policy";
 import { UserClassPolicy } from "@/policies/userClass.policy";
 import { ClassService } from "../class/class.service";
 import { NotFoundError } from "@/common/errors/NotFoundError";
+import { ClassPolicy } from "@/policies/class.policy";
 
 const addPermissions = async (currentUser: UserIdentity, userClass: UserClassPublicDTO): Promise<WithPermission<UserClassPublicDTO>> => {
     return {
@@ -15,7 +16,9 @@ const addPermissions = async (currentUser: UserIdentity, userClass: UserClassPub
         permission: {
             canUpdate: await UserClassPolicy.manage(currentUser, userClass.userClassId),
             canDelete: await UserClassPolicy.manage(currentUser, userClass.userClassId),
-            canGet: await UserClassPolicy.get(currentUser, userClass.userClassId)
+            canGet: await UserClassPolicy.get(currentUser, userClass.userClassId),
+            canGetUser: await UserPolicy.getDetail(currentUser, userClass.user.userId),
+            canGetClass: await ClassPolicy.get(currentUser, userClass.class.classId)
         }
     };
 }
