@@ -36,6 +36,7 @@ const addPermissions = async <T extends UserPublicDTO>(currentUser: UserIdentity
         permission: {
             canUpdate: await UserPolicy.update(currentUser, user.userId),
             canDelete: await UserPolicy.delete(currentUser, user.userId),
+            canGetDetail: await UserPolicy.getDetail(currentUser, user.userId)
         }
     };
 };
