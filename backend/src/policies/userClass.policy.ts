@@ -11,6 +11,9 @@ export const UserClassPolicy = {
         if (!await ClassPolicy.get(currentUser, userClass.class.classId)) {
             return false;
         }
+        if (await UserService.getUserRole(currentUser) === UserRole.ADMIN) {
+            return true;
+        }
         const roles = await UserClassService.getUserClassRoles(currentUser.userId, userClass.class.classId);
         if (roles.includes(UserClassRole.TEACHER) || roles.includes(UserClassRole.TEACHER_ASSISTANT)) {
             return true;
