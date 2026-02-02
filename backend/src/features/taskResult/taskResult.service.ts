@@ -11,6 +11,12 @@ import { ContentPolicy } from "@/policies/content.policy";
 import { ForbiddenError } from "@/common/errors/ForbiddenError";
 import { SessionPolicy } from "@/policies/session.policy";
 import { ConflictError } from "@/common/errors/ConflictError";
+import { mapToUserPublicDTO } from "../user/user.service";
+
+const mapToPublicDTO = (taskResult: TaskResultPublicDTO): TaskResultPublicDTO => ({
+    ...taskResult,
+    user: mapToUserPublicDTO(taskResult.user)
+})
 
 export const TaskResultService = {
     async ensureTaskResult(currentUser: UserIdentity, sessionId: number, contentId: number): Promise<TaskResultPublicDTO[]> {
@@ -33,7 +39,7 @@ export const TaskResultService = {
 
         await Promise.all(validUserIds.map(userId => TaskResultRepository.upsert(contentId, userId)));
         await TaskResultRepository.deleteInvalidTaskResult(contentId, validUserIds);
-        return TaskResultRepository.findByUserIdsAndContentIds({ contentIds: [contentId] });
+        return (await TaskResultRepository.findByUserIdsAndContentIds({ contentIds: [contentId] })).map(taskResult => mapToPublicDTO(taskResult));
 
     },
 
@@ -54,7 +60,7 @@ export const TaskResultService = {
         const validUserIds = userClasses
             .filter(uc => uc.data.enrolledAt <= startTime && (uc.data.deletedAt === null || uc.data.deletedAt >= startTime))
             .map(uc => uc.data.user.userId);
-        return TaskResultRepository.findByUserIdsAndContentIds({ userIds: validUserIds, contentIds: [contentId]});
+        return (await TaskResultRepository.findByUserIdsAndContentIds({ userIds: validUserIds, contentIds: [contentId]})).map(taskResult => mapToPublicDTO(taskResult));
     },
     
     async getUserSessionTaskResult(currentUser: UserIdentity, userId: number, sessionId: number): Promise<TaskResultPublicDTO[]> {
@@ -64,7 +70,7 @@ export const TaskResultService = {
         const session = (await SessionService.getById(currentUser, sessionId));
         if (!session) throw new NotFoundError("SESSION.NOT_FOUND");
         const contents = await ContentService.getBySessionId(currentUser, session.data.sessionId);
-        return TaskResultRepository.findByUserIdsAndContentIds({ userIds: [userId], contentIds: contents.map(content => content.data.contentId)})
+        return (await TaskResultRepository.findByUserIdsAndContentIds({ userIds: [userId], contentIds: contents.map(content => content.data.contentId)})).map(taskResult => mapToPublicDTO(taskResult));
     },
 
     async updateTaskResult(currentUser: UserIdentity, contentId: number, userId: number, data: UpdateTaskResultDTO): Promise<TaskResultPublicDTO> {
@@ -72,6 +78,6 @@ export const TaskResultService = {
             throw new ForbiddenError("TASK_RESULT.FORBIDDEN_MANAGE");
         }
         await TaskResultRepository.upsert(contentId, userId);
-        return TaskResultRepository.updateTaskResult(contentId, userId, data);
+        return mapToPublicDTO(await TaskResultRepository.updateTaskResult(contentId, userId, data));
     }
 }

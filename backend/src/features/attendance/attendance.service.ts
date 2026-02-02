@@ -8,6 +8,12 @@ import { NotFoundError } from "../../common/errors/NotFoundError";
 import { SessionPolicy } from "@/policies/session.policy";
 import { UserClassPolicy } from "@/policies/userClass.policy";
 import { ConflictError } from "@/common/errors/ConflictError";
+import { mapToUserPublicDTO } from "../user/user.service";
+
+const mapToPublicDTO = (attedance: AttendancePublicDTO) => ({
+    ...attedance,
+    user: mapToUserPublicDTO(attedance.user)
+})
 
 export const AttendanceService = {
     async ensureAttendance(currentUser: UserIdentity, sessionId: number): Promise<AttendancePublicDTO[]> {
@@ -28,7 +34,7 @@ export const AttendanceService = {
 
         await Promise.all(validUserIds.map(userId => AttendanceRepository.upsert(sessionId, userId)));
         await AttendanceRepository.deleteInvalidAttendance(sessionId, validUserIds);
-        return AttendanceRepository.findByUserIdsAndSessionIds({ sessionIds: [sessionId] });
+        return (await AttendanceRepository.findByUserIdsAndSessionIds({ sessionIds: [sessionId] })).map(attendance => mapToPublicDTO(attendance));
 
     },
 
@@ -37,7 +43,7 @@ export const AttendanceService = {
             throw new NotFoundError("SESSION.FORBIDDEN_GET");
         }
         const attendances = await AttendanceRepository.findByUserIdsAndSessionIds({ sessionIds: [sessionId] });
-        return attendances;
+        return attendances.map(attendance => mapToPublicDTO(attendance));
     },
 
     async getUserClassAttendance(currentUser: UserIdentity, userClassId: number): Promise<AttendancePublicDTO[]> {
@@ -50,7 +56,7 @@ export const AttendanceService = {
         }
         const sessions = await SessionService.getByClassId(currentUser, userClass.data.class.classId);
         const attendances = await AttendanceRepository.findByUserIdsAndSessionIds({ userIds: [userClass.data.user.userId], sessionIds: sessions.map(session => session.data.sessionId) });
-        return attendances;
+        return attendances.map(attendance => mapToPublicDTO(attendance));
     },
 
     async updateAttendance(currentUser: UserIdentity, sessionId: number, userId: number, data: UpdateAttendanceDTO): Promise<AttendancePublicDTO> {
@@ -58,6 +64,6 @@ export const AttendanceService = {
             throw new NotFoundError("SESSION.FORBIDDEN_ATTENDANCE_MANAGE");
         }
         await AttendanceRepository.upsert(sessionId, userId);
-        return AttendanceRepository.updateAttendance(sessionId, userId, data);
+        return mapToPublicDTO(await AttendanceRepository.updateAttendance(sessionId, userId, data));
     }
 }
