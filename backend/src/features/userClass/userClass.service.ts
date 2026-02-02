@@ -15,6 +15,7 @@ const addPermissions = async (currentUser: UserIdentity, userClass: UserClassPub
         permission: {
             canUpdate: await UserClassPolicy.manage(currentUser, userClass.userClassId),
             canDelete: await UserClassPolicy.manage(currentUser, userClass.userClassId),
+            canGet: await UserClassPolicy.get(currentUser, userClass.userClassId)
         }
     };
 }
