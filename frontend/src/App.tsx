@@ -30,6 +30,8 @@ import { UserDetailPage } from './features/user/UserDetailPage';
 import { ClassesPage } from './features/class/ClassesPage';
 import { SessionProvider } from './features/session/SessionContext';
 import { ClassDetailPage } from './features/class/ClassDetailPage';
+import { AttendanceProvider } from './features/attendance/AttendanceContext';
+import { UserClassPage } from './features/userClass/UserClassPage';
 // import { UserClassProvider } from './contexts/UserClassContext';
 // import { AttendanceProvider } from './contexts/AttendanceContext';
 // import { SessionDetailPage } from './pages/SessionDetailPage';
@@ -106,7 +108,7 @@ const AppRoutes: React.FC = () => {
             </ClassProvider>
           }
         />
-        {/* <Route
+        <Route
           path="user-classes/:userClassId"
           element={
             <UserClassProvider>
@@ -117,7 +119,7 @@ const AppRoutes: React.FC = () => {
               </SessionProvider>
             </UserClassProvider>
           }
-        /> */}
+        />
         {/* <Route path="programs" element={<ProgramsPage />} />
         <Route path="programs/:programId" element={<ProgramDetailPage />} /> */}
         {/* <Route
