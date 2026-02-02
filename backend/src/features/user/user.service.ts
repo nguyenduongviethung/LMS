@@ -7,7 +7,7 @@ import { NotFoundError } from "@/common/errors/NotFoundError";
 import { UserPolicy } from "@/policies/user.policy";
 import { ForbiddenError } from "@/common/errors/ForbiddenError";
 
-const mapToPublicDTO = (user: UserPublicDTO): UserPublicDTO => {
+export const mapToUserPublicDTO = (user: UserPublicDTO): UserPublicDTO => {
     return {
         userId: user.userId,
         name: user.name,
@@ -22,9 +22,9 @@ const mapToPublicDTO = (user: UserPublicDTO): UserPublicDTO => {
     };
 };
 
-const mapToDetailDTO = (user: UserRecord): UserPublicDTO => {
+const mapToUserDetailDTO = (user: UserRecord): UserPublicDTO => {
     return {
-        ...mapToPublicDTO(user),
+        ...mapToUserPublicDTO(user),
         email: user.email,
         phone: user.phone,
     };
@@ -60,8 +60,8 @@ export const UserService = {
         else users = await UserRepository.findAll();
         return await Promise.all(users.map(async user => {
             const strippedUser = (!await UserPolicy.getDetail(currentUser, user.userId)) ?
-                mapToPublicDTO(user) :
-                mapToDetailDTO(user);
+                mapToUserPublicDTO(user) :
+                mapToUserDetailDTO(user);
             return addPermissions(currentUser, strippedUser);
         }));
     },
@@ -71,7 +71,7 @@ export const UserService = {
         if (!user) {
             throw new NotFoundError("USER.NOT_FOUND");
         }
-        return addPermissions(currentUser, mapToDetailDTO(user));
+        return addPermissions(currentUser, mapToUserDetailDTO(user));
     },
 
     async getDetailUser(currentUser: UserIdentity, userId: number): Promise<WithPermission<UserPublicDTO>> {
@@ -82,7 +82,7 @@ export const UserService = {
         if (!user) {
             throw new NotFoundError("USER.NOT_FOUND");
         }
-        return addPermissions(currentUser, mapToDetailDTO(user));
+        return addPermissions(currentUser, mapToUserDetailDTO(user));
     },
 
     async createUser(currentUser: UserIdentity, data: CreateUserDTO): Promise<UserPublicDTO> {
@@ -91,7 +91,7 @@ export const UserService = {
         }
         const hashed = await bcrypt.hash(data.password, 10);
 
-        return mapToDetailDTO(await UserRepository.create({
+        return mapToUserDetailDTO(await UserRepository.create({
             ...data,
             password: hashed
         }));
@@ -101,13 +101,13 @@ export const UserService = {
         if (!(await UserPolicy.update(currentUser, userId))) {
             throw new ForbiddenError("USER.FORBIDDEN_UPDATE");
         }
-        return mapToDetailDTO(await UserRepository.update(userId, data));
+        return mapToUserDetailDTO(await UserRepository.update(userId, data));
     },
 
     async deleteUser(currentUser: UserIdentity, userId: number): Promise<UserPublicDTO> {
         if (!(await UserPolicy.delete(currentUser, userId))) {
             throw new ForbiddenError("USER.FORBIDDEN_DELETE");
         }
-        return mapToDetailDTO(await UserRepository.delete(userId));
+        return mapToUserDetailDTO(await UserRepository.delete(userId));
     }
 };

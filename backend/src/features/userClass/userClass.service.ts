@@ -9,6 +9,7 @@ import { UserClassPolicy } from "@/policies/userClass.policy";
 import { ClassService } from "../class/class.service";
 import { NotFoundError } from "@/common/errors/NotFoundError";
 import { ClassPolicy } from "@/policies/class.policy";
+import { mapToUserPublicDTO } from "../user/user.service";
 
 const addPermissions = async (currentUser: UserIdentity, userClass: UserClassPublicDTO): Promise<WithPermission<UserClassPublicDTO>> => {
     return {
@@ -22,6 +23,11 @@ const addPermissions = async (currentUser: UserIdentity, userClass: UserClassPub
         }
     };
 }
+
+const mapToPublicDTO = (userClass: UserClassPublicDTO): UserClassPublicDTO => ({
+    ...userClass,
+    user: mapToUserPublicDTO(userClass.user)
+})
 
 export const UserClassService = {
     async getUserClassRole(userClassId: number): Promise<UserClassRole | null> {
@@ -39,7 +45,7 @@ export const UserClassService = {
             throw new ForbiddenError("USER.FORBIDDEN_GET_DETAIL");
         }
         const result = await UserClassRepository.findByUserIdsAndClassIds(active, [userId], undefined, userClassRoles);
-        return Promise.all(result.map(async userClass => addPermissions(currentUser, userClass)));
+        return Promise.all(result.map(async userClass => addPermissions(currentUser, mapToPublicDTO(userClass))));
     },
 
     async getByClassId(currentUser: UserIdentity, active: boolean, classId: number, userClassRoles?: UserClassRole[]): Promise<WithPermission<UserClassPublicDTO>[]> {
@@ -47,7 +53,7 @@ export const UserClassService = {
             throw new ForbiddenError("CLASS.FORBIDDEN_GET");
         }
         const result = await UserClassRepository.findByUserIdsAndClassIds(active, undefined, [classId], userClassRoles);
-        return Promise.all(result.map(async userClass => addPermissions(currentUser, userClass)));
+        return Promise.all(result.map(async userClass => addPermissions(currentUser, mapToPublicDTO(userClass))));
     },
 
     async getByIdRaw(userClassId: number) {
@@ -66,27 +72,27 @@ export const UserClassService = {
         if (!result) {
             throw new NotFoundError("USER_CLASS.NOT_FOUND");
         }
-        return addPermissions(currentUser, result);
+        return addPermissions(currentUser, mapToPublicDTO(result));
     },
 
     async createUserClass(currentUser: UserIdentity, data: CreateUserClassDTO) {
         if (!await UserClassPolicy.create(currentUser, data.classId)) {
             throw new ForbiddenError("USER_CLASS.FORBIDDEN_CREATE");
         }
-        return UserClassRepository.create(data);
+        return mapToPublicDTO(await UserClassRepository.create(data));
     },
 
     async updateUserClass(currentUser: UserIdentity, userClassId: number, data: UpdateUserClassDTO) {
         if (!await UserClassPolicy.manage(currentUser, userClassId)) {
             throw new ForbiddenError("USER_CLASS.FORBIDDEN_UPDATE");
         }
-        return UserClassRepository.update(userClassId, data);
+        return mapToPublicDTO(await UserClassRepository.update(userClassId, data));
     },
 
     async deleteUserClass(currentUser: UserIdentity, userClassId: number): Promise<UserClassPublicDTO> {
         if (!await UserClassPolicy.manage(currentUser, userClassId)) {
             throw new ForbiddenError("USER_CLASS.FORBIDDEN_DELETE");
         }
-        return UserClassRepository.delete(userClassId);
+        return mapToPublicDTO(await UserClassRepository.delete(userClassId));
     }
 };
