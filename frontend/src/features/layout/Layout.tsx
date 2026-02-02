@@ -31,7 +31,7 @@ import {
 const menuItems = [
   { icon: Users, label: 'Người dùng', path: '/users' },
   { icon: BookOpen, label: 'Lớp học', path: '/classes' },
-  // { icon: Calendar, label: 'Buổi học', path: '/sessions' },
+  { icon: Calendar, label: 'Buổi học', path: '/sessions' },
   // { icon: ClipboardCheck, label: 'Điểm danh', path: '/attendance' },
   // { icon: BookCheck, label: 'Bài tập', path: '/assignments' },
   // { icon: FileText, label: 'Bài tập về nhà', path: '/homework' },

@@ -39,7 +39,7 @@ export const UsersPage: React.FC = () => {
     setOpenCreate(true);
   };
 
-  const handleEdit = (user: WithPermission<UserPublicDTO>) => {
+  const handleUpdate = (user: WithPermission<UserPublicDTO>) => {
     setSelectedUser(user);
     setOpenUpdate(true);
   }
@@ -117,7 +117,7 @@ export const UsersPage: React.FC = () => {
                     {user.permission.canUpdate && (<Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => handleEdit(user)}
+                      onClick={() => handleUpdate(user)}
                     >
                       <Edit className="size-4" />
                     </Button>)}

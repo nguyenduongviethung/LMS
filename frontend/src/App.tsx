@@ -5,24 +5,7 @@ import { Layout } from './features/layout/Layout';
 import { DashboardPage } from './features/dashboard/DashboardPage';
 import { LoginPage } from './features/auth/LoginPage';
 import { UserProvider } from './features/user/UserContext';
-// import { ClassProvider } from './contexts/ClassContext';
-// import { SessionProvider } from './contexts/SessionContext';
-// import { LoginPage } from './pages/LoginPage';
-// import { DashboardPage } from './pages/DashboardPage';
 import { UsersPage } from './features/user/UsersPage';
-// import { ClassesPage } from './pages/ClassesPage';
-// import { ProgramsPage } from './pages/ProgramsPage';
-// import { SessionsPage } from './pages/SessionsPage';
-// import { AttendancePage } from './pages/AttendancePage';
-// import { AssignmentsPage } from './pages/AssignmentsPage';
-// import { HomeworkPage } from './pages/HomeworkPage';
-// import { QuizzesPage } from './pages/QuizzesPage';
-// import { ReviewsPage } from './pages/ReviewsPage';
-// import { TuitionsPage } from './pages/TuitionsPage';
-// import { UserDetailPage } from './pages/UserDetailPage';
-// import { ClassDetailPage } from './pages/ClassDetailPage';
-// import { ProgramDetailPage } from './pages/ProgramDetailPage';
-// import { Layout } from './components/Layout';
 import { Toaster } from './ui/sonner';
 import { ClassProvider } from './features/class/ClassContext';
 import { UserClassProvider } from './features/userClass/UserClassContext';
@@ -32,11 +15,10 @@ import { SessionProvider } from './features/session/SessionContext';
 import { ClassDetailPage } from './features/class/ClassDetailPage';
 import { AttendanceProvider } from './features/attendance/AttendanceContext';
 import { UserClassPage } from './features/userClass/UserClassPage';
-// import { UserClassProvider } from './contexts/UserClassContext';
-// import { AttendanceProvider } from './contexts/AttendanceContext';
-// import { SessionDetailPage } from './pages/SessionDetailPage';
-// import { UserClassPage } from './pages/UserClassPage';
-// import { ContentProvider } from './contexts/ContentContext';
+import { SessionsPage } from './features/session/SessionsPage';
+import { ContentProvider } from './features/content/ContentContext';
+import { FileProvider } from './features/file/FileContext';
+import { SessionDetailPage } from './features/session/SessionDetailPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -122,7 +104,7 @@ const AppRoutes: React.FC = () => {
         />
         {/* <Route path="programs" element={<ProgramsPage />} />
         <Route path="programs/:programId" element={<ProgramDetailPage />} /> */}
-        {/* <Route
+        <Route
           path="sessions"
           element={
             <ClassProvider>
@@ -131,19 +113,21 @@ const AppRoutes: React.FC = () => {
               </SessionProvider>
             </ClassProvider>
           }
-        /> */}
-        {/* <Route
+        />
+        <Route
           path="sessions/:sessionId"
           element={
             <ClassProvider>
               <SessionProvider>
                 <ContentProvider>
-                  <SessionDetailPage />
+                  <FileProvider>
+                    <SessionDetailPage />
+                  </FileProvider>
                 </ContentProvider>
               </SessionProvider>
             </ClassProvider>
           }
-        /> */}
+        />
         {/* <Route
           path="attendance"
           element={
