@@ -72,10 +72,6 @@ export const SessionService = {
         if (!await SessionPolicy.manage(currentUser, sessionId)) {
             throw new ForbiddenError("SESSION.FORBIDDEN_DELETE");
         }
-        const session = await SessionRepository.findById(sessionId);
-        if (!session) {
-            throw new NotFoundError("SESSION.NOT_FOUND");
-        }
         return SessionRepository.deleteSession(sessionId);
     }
 };

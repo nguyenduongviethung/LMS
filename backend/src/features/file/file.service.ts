@@ -1,6 +1,6 @@
 import { FileRepository } from "./file.repository";
 import { UserIdentity } from "@shared/src/types/user.types";
-import { FilePublicDTO } from "@shared/src/types/file.types";
+import { FileDetailDTO, FilePublicDTO } from "@shared/src/types/file.types";
 import { FileType } from "@shared/src/enums/file.enum";
 import { FilePolicy } from "@/policies/file.policy";
 import { ForbiddenError } from "@/common/errors/ForbiddenError";
@@ -10,9 +10,6 @@ export const FileService = {
         if (!await FilePolicy.create(currentUser)) {
             throw new ForbiddenError("FILE.FORBIDDEN_CREATE");
         }
-        if (!file) {
-            throw new Error("File is required");
-        }
 
         return FileRepository.create({
             filename: Buffer.from(file.originalname, 'latin1').toString('utf8'),
@@ -21,6 +18,10 @@ export const FileService = {
             filesize: file.size,
             url: ''
         });
+    },
+    
+    async getById(currentUser: UserIdentity, fileId: number): Promise<FileDetailDTO | null> {
+        return FileRepository.findById(fileId);
     },
 
     async createLink(currentUser: UserIdentity, data: { filename: string; url: string }): Promise<FilePublicDTO> {

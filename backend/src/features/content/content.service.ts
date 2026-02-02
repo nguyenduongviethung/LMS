@@ -21,7 +21,7 @@ const addPermission = async (currentUser: UserIdentity, content: ContentPublicDT
 export const ContentService = {
     async getBySessionId(currentUser: UserIdentity, sessionId: number): Promise<WithPermission<ContentPublicDTO>[]> {
         if(!await SessionPolicy.get(currentUser, sessionId)) {
-            throw new ForbiddenError("CONTENT.FORBIDDEN_GET_SESSION");
+            throw new ForbiddenError("SESSION.FORBIDDEN_GET");
         }
         const result = await ContentRepository.findBySessionId(sessionId);
         return Promise.all(result.map(async content => await addPermission(currentUser, content)));

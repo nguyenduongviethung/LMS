@@ -1,3 +1,4 @@
+import { NotFoundError } from "@/common/errors/NotFoundError";
 import { prisma } from "../../database/client";
 import { sessionPublicSelect } from "./session.select";
 import { SessionPublicDTO, CreateSessionDTO, UpdateSessionDTO } from "@shared/src/types/session.types";
@@ -32,7 +33,7 @@ export const SessionRepository = {
             },
             select: sessionPublicSelect,
         }).then(sessions => sessions.map((session) => {
-            if (session === null) throw new Error('Session not found');
+            if (session === null) throw new NotFoundError('SESSION.NOT_FOUND');
             return mapSessionToDTO(session);
         }));
     },

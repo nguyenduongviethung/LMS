@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../database/client";
 import { contentPublicSelect } from "./content.select";
 import { CreateContentDTO, ContentPublicDTO, UpdateContentDTO } from "@shared/src/types/content.types";
+import { NotFoundError } from "@/common/errors/NotFoundError";
 
 export const ContentRepository = {
     async findByIds(contentIds: number[]): Promise<ContentPublicDTO[]> {
@@ -19,7 +20,7 @@ export const ContentRepository = {
         });
 
         if (!session) {
-            throw new Error("Session not found");
+            throw new NotFoundError("SESSION.NOT_FOUND");
         }
 
         // 2. Điều kiện content gắn trực tiếp với session

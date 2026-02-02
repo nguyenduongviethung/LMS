@@ -10,6 +10,7 @@ import { UserClassRole } from "@shared/src/enums/userClass.enum";
 import { ContentPolicy } from "@/policies/content.policy";
 import { ForbiddenError } from "@/common/errors/ForbiddenError";
 import { SessionPolicy } from "@/policies/session.policy";
+import { ConflictError } from "@/common/errors/ConflictError";
 
 export const TaskResultService = {
     async ensureTaskResult(currentUser: UserIdentity, sessionId: number, contentId: number): Promise<TaskResultPublicDTO[]> {
@@ -17,11 +18,11 @@ export const TaskResultService = {
             throw new ForbiddenError("TASK_RESULT.FORBIDDEN_MANAGE");
         }
         const sessionContent = await SessionContentService.getBySessionIdAndContentId(currentUser, sessionId, contentId);
-        if (!sessionContent) throw new NotFoundError("CONTENT.NOT_FOUND_IN_SESSION");
+        if (!sessionContent) throw new NotFoundError("SESSION_CONTENT.NOT_FOUND");
 
         const startTime = sessionContent.session.startTime
         if (!startTime) {
-            throw new Error("SESSION.START_TIME_NOT_SET");
+            throw new ConflictError("SESSION.START_TIME_NOT_SET");
         }
         const userClasses =
             await UserClassService.getByClassId(currentUser, false, sessionContent.session.class.classId, [UserClassRole.STUDENT]);
@@ -41,7 +42,7 @@ export const TaskResultService = {
             throw new ForbiddenError("SESSION.FORBIDDEN_GET");
         }
         const sessionContent = await SessionContentService.getBySessionIdAndContentId(currentUser, sessionId, contentId);
-        if (!sessionContent) throw new NotFoundError("CONTENT.NOT_FOUND_IN_SESSION");
+        if (!sessionContent) throw new NotFoundError("SESSION_CONTENT.NOT_FOUND");
 
         const startTime = sessionContent.session.startTime
         if (!startTime) {

@@ -7,6 +7,7 @@ import { AttendancePublicDTO, UpdateAttendanceDTO } from "@shared/src/types/atte
 import { NotFoundError } from "../../common/errors/NotFoundError";
 import { SessionPolicy } from "@/policies/session.policy";
 import { UserClassPolicy } from "@/policies/userClass.policy";
+import { ConflictError } from "@/common/errors/ConflictError";
 
 export const AttendanceService = {
     async ensureAttendance(currentUser: UserIdentity, sessionId: number): Promise<AttendancePublicDTO[]> {
@@ -16,7 +17,7 @@ export const AttendanceService = {
         const session = await SessionService.getById(currentUser, sessionId);
         const startTime = session.data.startTime;
         if (!startTime) {
-            throw new Error("SESSION.START_TIME_NOT_SET");
+            throw new ConflictError("SESSION.START_TIME_NOT_SET");
         }
         const userClasses =
             await UserClassService.getByClassId(currentUser, false, session.data.class.classId, [UserClassRole.STUDENT]);
