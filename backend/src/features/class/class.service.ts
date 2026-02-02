@@ -16,6 +16,7 @@ const addPermission = async (currentUser: UserIdentity, cls: ClassPublicDTO): Pr
         permission: {
             canUpdate: await ClassPolicy.update(currentUser, cls.classId),
             canDelete: await ClassPolicy.delete(currentUser),
+            canGet: await ClassPolicy.get(currentUser, cls.classId),
             canCreateUserClass: await UserClassPolicy.create(currentUser, cls.classId)
         }
     }
