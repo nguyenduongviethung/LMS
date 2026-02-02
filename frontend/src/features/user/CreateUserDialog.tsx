@@ -40,10 +40,8 @@ function useCreateUserForm(onSuccess: () => void) {
       await addUser(formData)
 
       toast.success("Thêm người dùng thành công")
-      onSuccess() // đóng dialog SAU toast
-    } catch (err) {
-      toast.error("Thêm người dùng thất bại")
-    }
+      onSuccess();
+    } catch (err) {}
   }
 
   return {

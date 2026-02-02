@@ -75,8 +75,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         data: convertUserDate(user.data),
         permission: user.permission,
       })));
-    } catch (e) {
-      handleApiError(e);
+    } catch (error) {
+      handleApiError(error);
+      throw error;
     }
   };
 
@@ -87,32 +88,36 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         data: convertUserDate(res.data.data),
         permission: res.data.permission,
       } : null);
-    } catch (e) {
-      handleApiError(e);
+    } catch (error) {
+      handleApiError(error);
+      throw error;
     }
   }
 
   const addUser = async (user: CreateUserDTO) => {
     try {
       await api.post<UserPublicDTO>('/users', user);
-    } catch (e) {
-      handleApiError(e);
+    } catch (error) {
+      handleApiError(error);
+      throw error;
     }
   };
 
   const updateUser = async (userId: number, userData: UpdateUserDTO) => {
     try {
       await api.put<UserPublicDTO>(`/users/${userId}`, userData);
-    } catch (e) {
-      handleApiError(e);
+    } catch (error) {
+      handleApiError(error);
+      throw error;
     }
   };
 
   const deleteUser = async (userId: number) => {
     try {
       await api.delete(`/users/${userId}`);
-    } catch (e) {
-      handleApiError(e);
+    } catch (error) {
+      handleApiError(error);
+      throw error;
     }
   };
 

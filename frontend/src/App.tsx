@@ -24,6 +24,9 @@ import { UsersPage } from './features/user/UsersPage';
 // import { ProgramDetailPage } from './pages/ProgramDetailPage';
 // import { Layout } from './components/Layout';
 import { Toaster } from './ui/sonner';
+import { ClassProvider } from './features/class/ClassContext';
+import { UserClassProvider } from './features/userClass/UserClassContext';
+import { UserDetailPage } from './features/user/UserDetailPage';
 // import { UserClassProvider } from './contexts/UserClassContext';
 // import { AttendanceProvider } from './contexts/AttendanceContext';
 // import { SessionDetailPage } from './pages/SessionDetailPage';
@@ -66,7 +69,7 @@ const AppRoutes: React.FC = () => {
             </UserProvider>
           }
         />
-        {/* <Route
+        <Route
           path="users/:userId"
           element={
             <UserProvider>
@@ -78,7 +81,7 @@ const AppRoutes: React.FC = () => {
             </UserProvider>
           }
         />
-        <Route
+        {/* <Route
           path="classes"
           element={
             <ClassProvider>

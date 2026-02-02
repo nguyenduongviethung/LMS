@@ -40,10 +40,8 @@ function useUpdateUserForm(user: UserPublicDTO, onSuccess: () => void) {
       await updateUser(user.userId, formData)
 
       toast.success("Cập nhật người dùng thành công")
-      onSuccess() // đóng dialog SAU toast
-    } catch (err) {
-      toast.error("Cập nhật thất bại")
-    }
+      onSuccess();
+    } catch (err) {}
   }
 
   return {

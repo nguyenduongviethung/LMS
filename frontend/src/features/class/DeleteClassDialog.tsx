@@ -1,59 +1,51 @@
-import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogCancel, AlertDialogAction } from "../../ui/alert-dialog";
-import { Button } from "../../ui/button";
-import { useUser } from "./UserContext";
-import { toast } from "sonner";
-import { UserPublicDTO } from "@shared/src/types/user.types";
+import { ClassPublicDTO } from "@shared/src/types/class.types";
 import { WithPermission } from "@shared/src/types/permission.types";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogCancel, AlertDialogAction } from "../../ui/alert-dialog";
+import { useClass } from "./ClassContext";
+import { toast } from "sonner";
+import { Button } from "../../ui/button";
 
-export function DeleteUserDialog({
-  user,
+export function DeleteClassDialog({
+  cls,
   open,
   onOpenChange,
   onSuccess
 }: {
-  user: WithPermission<UserPublicDTO>;
+  cls: WithPermission<ClassPublicDTO>,
   open: boolean,
   onOpenChange: (open: boolean) => void,
   onSuccess: () => void;
 }) {
-  const { deleteUser } = useUser();
+  const { deleteClass } = useClass();
   const handleSubmit = async () => {
-    if (!user) return;
     try {
-      await deleteUser(user.data.userId);
-      toast("Xóa người dùng thành công")
+      await deleteClass(cls.data.classId);
+      toast("Xóa lớp học thành công")
       onSuccess();
     }
     catch (err) {}
   }
 
-  return user && (
+  return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="max-w-2xl">
         <AlertDialogHeader>
-          <AlertDialogTitle>Xác nhận xóa người dùng</AlertDialogTitle>
+          <AlertDialogTitle>Xác nhận xóa lớp học</AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="space-y-4">
-              <p>Bạn có chắc chắn muốn xóa người dùng sau?</p>
+              <p>Bạn có chắc chắn muốn xóa lớp học sau?</p>
               <div className="max-h-60 overflow-y-auto border rounded-lg p-4 bg-gray-50">
                 <div className="flex-1">
-                  <div className="font-medium">{user.data.name}</div>
+                  <div className="font-medium">{cls.data.name}</div>
+                  {cls.data.description && <div className="text-sm text-muted-foreground">
+                    Mô tả: {cls.data.description}
+                  </div>}
                   <div className="text-sm text-muted-foreground">
-                    {user.data.email}{user.data.phone ? ` • ${user.data.phone}` : ""}
+                    Ngày tạo: {cls.data.createdAt.toLocaleDateString('vi-VN')}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    Ngày tạo: {new Date(user.data.createdAt).toLocaleDateString("vi-VN")}
+                    Cập nhật lần cuối: {cls.data.updatedAt.toLocaleDateString('vi-VN')}
                   </div>
-                  {user.data.studyPlace && (
-                    <div className="text-sm text-muted-foreground">
-                      Nơi học tập: {user.data.studyPlace}
-                    </div>
-                  )}
-                  {user.data.workPlace && (
-                    <div className="text-sm text-muted-foreground">
-                      Nơi làm việc: {user.data.workPlace}
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
@@ -63,7 +55,7 @@ export function DeleteUserDialog({
           <AlertDialogCancel>Hủy</AlertDialogCancel>
           <AlertDialogAction asChild>
             <Button onClick={handleSubmit} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Xóa người dùng
+              Xóa lớp học
             </Button>
           </AlertDialogAction>
         </AlertDialogFooter>
