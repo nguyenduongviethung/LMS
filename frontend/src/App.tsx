@@ -27,6 +27,9 @@ import { Toaster } from './ui/sonner';
 import { ClassProvider } from './features/class/ClassContext';
 import { UserClassProvider } from './features/userClass/UserClassContext';
 import { UserDetailPage } from './features/user/UserDetailPage';
+import { ClassesPage } from './features/class/ClassesPage';
+import { SessionProvider } from './features/session/SessionContext';
+import { ClassDetailPage } from './features/class/ClassDetailPage';
 // import { UserClassProvider } from './contexts/UserClassContext';
 // import { AttendanceProvider } from './contexts/AttendanceContext';
 // import { SessionDetailPage } from './pages/SessionDetailPage';
@@ -81,7 +84,7 @@ const AppRoutes: React.FC = () => {
             </UserProvider>
           }
         />
-        {/* <Route
+        <Route
           path="classes"
           element={
             <ClassProvider>
@@ -94,14 +97,16 @@ const AppRoutes: React.FC = () => {
           element={
             <ClassProvider>
               <SessionProvider>
-                <UserClassProvider>
-                  <ClassDetailPage />
-                </UserClassProvider>
+                <UserProvider>
+                  <UserClassProvider>
+                    <ClassDetailPage />
+                  </UserClassProvider>
+                </UserProvider>
               </SessionProvider>
             </ClassProvider>
           }
         />
-        <Route
+        {/* <Route
           path="user-classes/:userClassId"
           element={
             <UserClassProvider>
