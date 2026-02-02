@@ -15,6 +15,12 @@ export const SessionPolicy = {
         const allowedClassIds = await ClassService.getAllowedClassIds(currentUser);
         return allowedClassIds.includes(session.class.classId);
     },
+    async create(currentUser: UserIdentity, classId?: number): Promise<boolean> {
+        if (await UserService.getUserRole(currentUser) === UserRole.ADMIN) {
+            return true;
+        }
+        return UserClassService.getUserClassRoles(currentUser.userId, classId).then(roles => roles.includes(UserClassRole.TEACHER));
+    },
 
     async manage(currentUser: UserIdentity, sessionId: number): Promise<boolean> {
         if (await UserService.getUserRole(currentUser) === UserRole.ADMIN) {

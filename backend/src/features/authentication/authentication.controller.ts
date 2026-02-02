@@ -7,6 +7,7 @@ import { UserPolicy } from '@/policies/user.policy';
 import { ClassPolicy } from '@/policies/class.policy';
 import { ContentPolicy } from '@/policies/content.policy';
 import { FilePolicy } from '@/policies/file.policy';
+import { SessionPolicy } from '@/policies/session.policy';
 
 export interface LoginRequest {
     email: string;
@@ -48,6 +49,9 @@ export const AuthenticationController = {
             class: {
                 create: await ClassPolicy.create(req.user!),
                 delete: await ClassPolicy.delete(req.user!),
+            },
+            session: {
+                create: await SessionPolicy.create(req.user!),
             },
             content: {
                 create: await ContentPolicy.create(req.user!)

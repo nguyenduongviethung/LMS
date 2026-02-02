@@ -51,7 +51,7 @@ export const SessionService = {
     },
 
     async createSession(currentUser: UserIdentity, data: CreateSessionDTO): Promise<WithPermission<SessionPublicDTO>> {
-        if (!await ClassPolicy.createSession(currentUser, data.classId)) {
+        if (!await SessionPolicy.create(currentUser, data.classId)) {
             throw new ForbiddenError("SESSION.FORBIDDEN_CREATE");
         }
 
