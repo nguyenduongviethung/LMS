@@ -1,17 +1,20 @@
 export interface UserPermissionDTO {
     user: {
         create: boolean
-    },
+    };
     class: {
         create: boolean,
         delete: boolean
-    },
+    };
+    session: {
+        create: boolean,
+    };
     content: {
         create: boolean
-    },
+    };
     file: {
         create: boolean,
-    }
+    };
 }
 
 export interface PermissionDTO {
