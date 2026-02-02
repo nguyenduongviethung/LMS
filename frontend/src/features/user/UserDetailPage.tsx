@@ -90,12 +90,12 @@ const UserClassesSection: React.FC<{ user: WithPermission<UserPublicDTO>, userCl
             {userClasses.map((userClass) => (
               <TableRow key={userClass.data.userClassId}>
                 <TableCell>
-                  <Link
+                  {userClass.permission.canGetClass ? (<Link
                     to={`/classes/${userClass.data.class.classId}`}
                     className="text-blue-600 hover:underline font-medium"
                   >
                     {userClass.data.class.name}
-                  </Link>
+                  </Link>) : userClass.data.class.name}
                 </TableCell>
                 <TableCell><UserClassRoleBadge role={userClass.data.role} /></TableCell>
                 <TableCell>{new Date(userClass.data.enrolledAt).toLocaleDateString('vi-VN')}</TableCell>
