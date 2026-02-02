@@ -100,9 +100,9 @@ const UserClassesSection: React.FC<{ user: WithPermission<UserPublicDTO>, userCl
                 <TableCell><UserClassRoleBadge role={userClass.data.role} /></TableCell>
                 <TableCell>{new Date(userClass.data.enrolledAt).toLocaleDateString('vi-VN')}</TableCell>
                 <TableCell className="text-right">
-                  <Button variant="outline" size="sm" asChild>
+                  {userClass.permission.canGet && <Button variant="outline" size="sm" asChild>
                     <Link to={`/user-classes/${userClass.data.userClassId}`}>Xem chi tiết</Link>
-                  </Button>
+                  </Button>}
                   {userClass.permission.canUpdate && <Button
                     variant="outline"
                     size="sm"

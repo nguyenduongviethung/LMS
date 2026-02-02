@@ -109,11 +109,11 @@ export const UsersPage: React.FC = () => {
                   <TableCell>{user.data.createdAt.toLocaleDateString('vi-VN')}</TableCell>
                   <TableCell>{user.data.updatedAt.toLocaleDateString('vi-VN')}</TableCell>
                   <TableCell className="text-right space-x-2">
-                    <Button variant="ghost" size="sm" asChild>
+                    {user.permission.canGetDetail && <Button variant="ghost" size="sm" asChild>
                       <Link to={`/users/${user.data.userId}`}>
                         <Eye className="size-4" />
                       </Link>
-                    </Button>
+                    </Button>}
                     {user.permission.canUpdate && (<Button
                       variant="ghost"
                       size="sm"
