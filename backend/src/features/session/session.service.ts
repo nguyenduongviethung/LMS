@@ -13,6 +13,7 @@ const addPermissions = async <T extends SessionPublicDTO>(currentUser: UserIdent
         permission: {
             canUpdate: await SessionPolicy.manage(currentUser, session.sessionId),
             canDelete: await SessionPolicy.manage(currentUser, session.sessionId),
+            canGet: await SessionPolicy.get(currentUser, session.sessionId),
             canManageAttendance: await SessionPolicy.manageAttendance(currentUser, session.sessionId),
         }
     };
