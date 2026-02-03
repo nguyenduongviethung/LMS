@@ -2,9 +2,7 @@
   "compilerOptions": {
     "target": "es2024",
     "module": "CommonJS",
-    "types": [
-      "node"
-    ],
+    "outDir": "dist",
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,

@@ -1,4 +1,4 @@
-import { UserIdentity } from "@shared/src/types/user.model";
+import { UserIdentity } from "@shared/src/types/user.types";
 
 declare global {
   namespace Express {
